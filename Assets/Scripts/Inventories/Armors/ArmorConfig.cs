@@ -1,7 +1,7 @@
 ﻿using Inventories.Configs;
 using UnityEngine;
 
-namespace Inventories.ArmorItems
+namespace Inventories.Armors
 {
     [CreateAssetMenu(fileName = nameof(InventoryItemData), menuName = "StaticData/Armors/" + nameof(ArmorConfig))]
     public class ArmorConfig : ScriptableObject

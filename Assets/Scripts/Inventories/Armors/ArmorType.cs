@@ -1,4 +1,4 @@
-﻿namespace Inventories.ArmorItems
+﻿namespace Inventories.Armors
 {
     public enum ArmorType
     {
