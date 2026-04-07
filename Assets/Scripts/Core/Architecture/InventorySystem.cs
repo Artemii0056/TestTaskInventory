@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Core.Architecture
 {
@@ -13,7 +14,8 @@ namespace Core.Architecture
 
         public bool TryAddItem(ItemStack itemStack)
         {
-            throw new Exception();
+            Debug.Log($"{itemStack.InventoryItemType}: {itemStack.Count}");
+            return false;
         }
         
         public bool TryRemoveItem(ItemStack itemStack)

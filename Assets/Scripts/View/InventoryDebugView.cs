@@ -16,20 +16,24 @@ namespace View
         private Wallet _wallet;
         
         private InventorySystem _inventorySystem;
-        
-        public void Construct(InventorySystem inventorySystem)
-        {
-            _inventorySystem = inventorySystem;
-            _wallet = new Wallet(10);
-        }
+        private InventoryPresenter _inventoryPresenter;
 
-        private void OnEnable()
+        public void Init(InventoryPresenter inventoryPresenter, Wallet wallet, InventorySystem inventorySystem)
         {
+            _inventoryPresenter = inventoryPresenter;
+            _inventorySystem = inventorySystem;
+            _wallet = wallet;
+            
             _addAmmoButton.OnClick += OnAddAmmoClick;
             _addItemButton.OnClick += OnAddItemClick;
             _deleteItemButton.OnClick += OnDeleteItemClick;
             _shootButton.OnClick += OnShootClick;
             _moneyButton.OnClick += OnMoneyClick;
+        }
+
+        private void OnEnable()
+        {
+            
         }
 
         private void OnDisable()
@@ -43,12 +47,13 @@ namespace View
 
         private void OnAddAmmoClick()
         {
-            throw new System.NotImplementedException();
+            Debug.Log(_inventoryPresenter == null);
+            _inventoryPresenter.AddAmmoClicked();
         }
         
         private void OnAddItemClick()
         {
-            throw new System.NotImplementedException();
+            _inventoryPresenter.AddItemClicked();
         }
         
         private void OnDeleteItemClick()

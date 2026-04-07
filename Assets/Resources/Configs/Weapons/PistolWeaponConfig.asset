@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PistolWeaponConfig
   m_EditorClassIdentifier: 
   <InventoryItemData>k__BackingField:
-    <InventoryItemType>k__BackingField: 7
+    <Type>k__BackingField: 7
     <Sprite>k__BackingField: {fileID: 21300000, guid: b3e0156fc298748fd817ca14f833f3c5, type: 3}
     <Description>k__BackingField: 
     <Weight>k__BackingField: 1

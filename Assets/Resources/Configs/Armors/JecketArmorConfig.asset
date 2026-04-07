@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: JecketArmorConfig
   m_EditorClassIdentifier: 
   <InventoryItemData>k__BackingField:
-    <InventoryItemType>k__BackingField: 3
+    <Type>k__BackingField: 3
     <Sprite>k__BackingField: {fileID: 21300000, guid: cdad9e116457e4420a6cbcdbb52cc6be, type: 3}
     <Description>k__BackingField: 
     <Weight>k__BackingField: 0.8

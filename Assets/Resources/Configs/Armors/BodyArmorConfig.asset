@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BodyArmorConfig
   m_EditorClassIdentifier: 
   <InventoryItemData>k__BackingField:
-    <InventoryItemType>k__BackingField: 4
+    <Type>k__BackingField: 4
     <Sprite>k__BackingField: {fileID: 21300000, guid: 61268e53e389d46f98a94853b00cdc7d, type: 3}
     <Description>k__BackingField: 
     <Weight>k__BackingField: 10

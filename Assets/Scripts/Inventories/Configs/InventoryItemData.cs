@@ -6,7 +6,7 @@ namespace Inventories.Configs
     [Serializable]
     public class InventoryItemData 
     {
-        [field: SerializeField] public InventoryItemType InventoryItemType { get; private set; }
+        [field: SerializeField] public InventoryItemType Type { get; private set; }
         [field: SerializeField] public Sprite Sprite { get; private set; }
         
         //[field: SerializeField] public string Name { get; private set; }

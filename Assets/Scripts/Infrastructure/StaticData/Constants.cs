@@ -1,0 +1,9 @@
+namespace Infrastructure.StaticData
+{
+    public static class Constants
+    {
+        public const string ConfigsAmmosPath = "Configs/Ammos";
+        public const string ConfigsArmorsPath = "Configs/Armors";
+        public const string ConfigsWeaponsPath = "Configs/Weapons";
+    }
+}
