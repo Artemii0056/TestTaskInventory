@@ -6,6 +6,11 @@ namespace Core.Architecture
     {
         private InventoryData _inventoryData;
 
+        public InventorySystem(InventoryData inventoryData)
+        {
+            _inventoryData = inventoryData;
+        }
+
         public bool TryAddItem(ItemStack itemStack)
         {
             throw new Exception();
