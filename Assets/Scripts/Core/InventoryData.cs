@@ -5,5 +5,7 @@ namespace Core
     public class InventoryData
     {
         private List<InventorySlotData> _slots;
+        
+        public IReadOnlyCollection<InventorySlotData> Slots => _slots;
     }
 }

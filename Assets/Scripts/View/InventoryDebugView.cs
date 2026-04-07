@@ -20,7 +20,7 @@ namespace View
         public void Construct(InventorySystem inventorySystem)
         {
             _inventorySystem = inventorySystem;
-            _wallet = new Wallet();
+            _wallet = new Wallet(10);
         }
 
         private void OnEnable()
