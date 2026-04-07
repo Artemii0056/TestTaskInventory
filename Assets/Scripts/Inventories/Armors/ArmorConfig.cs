@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Inventories.Armors
 {
-    [CreateAssetMenu(fileName = nameof(InventoryItemData), menuName = "StaticData/Armors/" + nameof(ArmorConfig))]
+    [CreateAssetMenu(fileName = nameof(ArmorConfig), menuName = "StaticData/Armors/" + nameof(ArmorConfig))]
     public class ArmorConfig : ScriptableObject
     {
         [field: Header("Inventory info")]
