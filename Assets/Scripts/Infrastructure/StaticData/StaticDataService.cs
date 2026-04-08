@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Infrastructure.ResourceLoad;
-using Inventories.Ammo;
-using Inventories.Armors;
-using Inventories.Weapons;
+using Inventories.Configs.Ammo;
+using Inventories.Configs.Armors;
+using Inventories.Configs.Weapons;
 using UnityEngine;
 
 namespace Infrastructure.StaticData
@@ -30,7 +30,7 @@ namespace Infrastructure.StaticData
             Debug.Log(_weaponConfigs.Count());
         }
 
-        public List<AmmoConfig> GetAmmoConfigs() =>  //TODO упростить
+        public List<AmmoConfig> GetAmmoConfigs() =>  
             _ammoConfigs.ToList();
 
         public List<WeaponConfig> GetWeaponConfigs() => 

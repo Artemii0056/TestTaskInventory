@@ -34,5 +34,6 @@ namespace Core
 
     public interface IWallet
     {
+        void Increase(int value);
     }
 }

@@ -1,38 +1,47 @@
 ﻿using Core;
 using Core.Architecture;
+using DefaultNamespace;
 using Infrastructure.ResourceLoad;
 using Infrastructure.StaticData;
-using Inventories.Ammo.AmmoFactories;
+using Inventories.Configs.Ammo.AmmoFactories;
+using Inventories.View;
 using UnityEngine;
-using View;
 
-namespace DefaultNamespace
+public class Bootstrapper : MonoBehaviour
 {
-    public class Bootstrapper : MonoBehaviour
+    [SerializeField] private InventoryActionsView _inventoryActionsView;
+    [SerializeField] private InventoryGridView _inventoryGridView;
+    [SerializeField] private InventoryInfoView _inventoryInfoView;
+    
+    private InventoryScreenPresenter _inventoryScreenPresenter;
+    
+    private void Start()
     {
-        [SerializeField] private InventoryDebugView _view;
-        
-        private void Start()
-        {
-            Init();
-        }
+        Init();
+    }
 
-        public void Init()
-        {
-            ResourceLoader resourceLoader = new ResourceLoader();
-            IStaticDataService staticDataService = new StaticDataService(resourceLoader);
+    public void Init()
+    {
+        ResourceLoader resourceLoader = new ResourceLoader();
+        IStaticDataService staticDataService = new StaticDataService(resourceLoader);
             
-            ItemCatalog itemCatalog = new ItemCatalog(staticDataService);
-            RandomService randomService = new RandomService();
-            IAmmoFactory ammoFactory = new AmmoFactory(randomService,itemCatalog );
+        ItemCatalog itemCatalog = new ItemCatalog(staticDataService);
+        IRandomService randomService = new RandomService();
+        IAmmoFactory ammoFactory = new AmmoFactory(randomService,itemCatalog );
             
-            InventoryData data = new InventoryData();
-            InventorySystem inventorySystem = new InventorySystem(data);
-            InventoryView view = new InventoryView();
-            
-            InventoryPresenter inventoryPresenter = new InventoryPresenter(inventorySystem, view, ammoFactory);
-            Wallet wallet = new Wallet(10);
-            _view.Init(inventoryPresenter, wallet, inventorySystem);
-        }
+        InventoryData data = new InventoryData();
+        InventorySystem inventorySystem = new InventorySystem(data);
+        InventoryGridView gridView = new InventoryGridView();
+        IDebugMessageService debugMessageService = new DebugMessageService();
+        
+        Wallet wallet = new Wallet(0);
+
+        InventoryScreenPresenter presenter = new InventoryScreenPresenter(_inventoryActionsView, _inventoryGridView, _inventoryInfoView, inventorySystem, wallet, ammoFactory, debugMessageService);
+        _inventoryScreenPresenter = presenter;
+    }
+
+    private void OnDisable()
+    {
+        _inventoryScreenPresenter.Dispose();
     }
 }

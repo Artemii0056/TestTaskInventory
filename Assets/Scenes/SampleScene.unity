@@ -629,6 +629,7 @@ GameObject:
   - component: {fileID: 405008782}
   - component: {fileID: 405008785}
   - component: {fileID: 405008784}
+  - component: {fileID: 405008786}
   m_Layer: 5
   m_Name: WeightView
   m_TagString: Untagged
@@ -694,6 +695,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 405008781}
   m_CullTransparentMesh: 1
+--- !u!114 &405008786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 405008781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4bf918675074e8aa80f18bf242ca376, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _baseText: "\u0412\u0435\u0441"
+  _text: {fileID: 364979279}
 --- !u!1 &420494349
 GameObject:
   m_ObjectHideFlags: 0
@@ -1397,6 +1412,7 @@ GameObject:
   m_Component:
   - component: {fileID: 693449387}
   - component: {fileID: 693449388}
+  - component: {fileID: 693449389}
   m_Layer: 5
   m_Name: Header
   m_TagString: Untagged
@@ -1452,6 +1468,20 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &693449389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 693449386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1996714e262b49779b63081a0e9364ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _moneyView: {fileID: 1298780808}
+  _weightView: {fileID: 405008786}
 --- !u!1 &698880079
 GameObject:
   m_ObjectHideFlags: 0
@@ -1679,7 +1709,6 @@ GameObject:
   - component: {fileID: 881930602}
   - component: {fileID: 881930601}
   - component: {fileID: 881930600}
-  - component: {fileID: 881930599}
   m_Layer: 5
   m_Name: 'InventoryScreenView '
   m_TagString: Untagged
@@ -1687,23 +1716,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &881930599
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 881930598}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a44bb2f760994b61ab6d45db7976ffa0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _addAmmoButton: {fileID: 1543125863}
-  _addItemButton: {fileID: 1264285585}
-  _deleteItemButton: {fileID: 1214636663}
-  _shootButton: {fileID: 1591887628}
-  _moneyButton: {fileID: 1446926366}
 --- !u!114 &881930600
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2016,7 +2028,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3e6fb13dc7e458ca2918738f57d7579, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _view: {fileID: 881930599}
 --- !u!1 &1013655791
 GameObject:
   m_ObjectHideFlags: 0
@@ -2674,7 +2685,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9aabd4a078d84f48a2899092be3af111, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: {fileID: 0}
+  <Text>k__BackingField: {fileID: 219105547}
+  <InventoryActionType>k__BackingField: 2
 --- !u!1 &1245838815
 GameObject:
   m_ObjectHideFlags: 0
@@ -3077,7 +3089,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 909db2320c6843128b027846b8814264, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: {fileID: 0}
+  <Text>k__BackingField: {fileID: 1268501561}
+  <InventoryActionType>k__BackingField: 1
 --- !u!1 &1268501559
 GameObject:
   m_ObjectHideFlags: 0
@@ -3357,6 +3370,7 @@ GameObject:
   - component: {fileID: 1298780804}
   - component: {fileID: 1298780807}
   - component: {fileID: 1298780806}
+  - component: {fileID: 1298780808}
   m_Layer: 5
   m_Name: MoneyView
   m_TagString: Untagged
@@ -3382,7 +3396,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 88.95}
+  m_SizeDelta: {x: 0, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1298780806
 MonoBehaviour:
@@ -3422,6 +3436,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1298780803}
   m_CullTransparentMesh: 1
+--- !u!114 &1298780808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1298780803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4bf918675074e8aa80f18bf242ca376, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _baseText: "\u041C\u043E\u043D\u0435\u0442\u044B"
+  _text: {fileID: 1245838817}
 --- !u!1 &1310047838
 GameObject:
   m_ObjectHideFlags: 0
@@ -3776,7 +3804,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0046eca12676463c8a5c0eb23e093a2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: {fileID: 0}
+  <Text>k__BackingField: {fileID: 1209375159}
+  <InventoryActionType>k__BackingField: 4
 --- !u!1 &1539326574
 GameObject:
   m_ObjectHideFlags: 0
@@ -3979,7 +4008,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22254d36cbda4e07882567f4d19ed489, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: {fileID: 0}
+  <Text>k__BackingField: {fileID: 1013655793}
+  <InventoryActionType>k__BackingField: 0
 --- !u!1 &1565342740
 GameObject:
   m_ObjectHideFlags: 0
@@ -4271,7 +4301,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69b74867c07bf4345b92c900ade90944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: {fileID: 0}
+  <Text>k__BackingField: {fileID: 1310047840}
+  <InventoryActionType>k__BackingField: 3
 --- !u!1 &1621134205
 GameObject:
   m_ObjectHideFlags: 0
@@ -5078,6 +5109,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2101065864}
   - component: {fileID: 2101065865}
+  - component: {fileID: 2101065866}
   m_Layer: 5
   m_Name: ButtonsPanel
   m_TagString: Untagged
@@ -5134,6 +5166,24 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &2101065866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2101065863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac466d2d15dd4b428f4307ff4a7b5953, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _buttonViews:
+  - {fileID: 1591887628}
+  - {fileID: 1543125863}
+  - {fileID: 1264285585}
+  - {fileID: 1214636663}
+  - {fileID: 1446926366}
 --- !u!1 &2122711927
 GameObject:
   m_ObjectHideFlags: 0

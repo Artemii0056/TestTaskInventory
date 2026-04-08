@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Inventories.Ammo;
-using Inventories.Armors;
-using Inventories.Weapons;
+using Inventories.Configs.Ammo;
+using Inventories.Configs.Armors;
+using Inventories.Configs.Weapons;
 
 namespace Infrastructure.StaticData
 {

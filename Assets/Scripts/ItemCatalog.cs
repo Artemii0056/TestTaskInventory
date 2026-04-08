@@ -1,30 +1,32 @@
 ﻿using System.Collections.Generic;
 using Infrastructure.StaticData;
-using Inventories.Ammo;
-using Inventories.Armors;
-using Inventories.Weapons;
+using Inventories;
+using Inventories.Configs.Ammo;
+using Inventories.Configs.Armors;
+using Inventories.Configs.Weapons;
 
-namespace DefaultNamespace
+public class ItemCatalog : IItemCatalog 
 {
-    public class ItemCatalog : IItemCatalog
-    {
-        public IReadOnlyCollection<ArmorConfig> ArmorConfigs;
-        public IReadOnlyCollection<AmmoConfig> AmmoConfigs;
-        public IReadOnlyCollection<WeaponConfig> WeaponConfigs;
+    public IReadOnlyCollection<ArmorConfig> ArmorConfigs;
+    public IReadOnlyCollection<AmmoConfig> AmmoConfigs;
+    public IReadOnlyCollection<WeaponConfig> WeaponConfigs;
         
-        private readonly IStaticDataService _staticDataService;
+    private readonly IStaticDataService _staticDataService;
 
-        public ItemCatalog(IStaticDataService staticDataService)
-        {
-            _staticDataService = staticDataService;
-            
-            ArmorConfigs = _staticDataService.GetArmorConfigs();
-            AmmoConfigs = _staticDataService.GetAmmoConfigs();
-            WeaponConfigs = _staticDataService.GetWeaponConfigs();
-        }
-    }
-
-    public interface IItemCatalog
+    public ItemCatalog(IStaticDataService staticDataService)
     {
+        _staticDataService = staticDataService;
+            
+        ArmorConfigs = _staticDataService.GetArmorConfigs();
+        AmmoConfigs = _staticDataService.GetAmmoConfigs();
+        WeaponConfigs = _staticDataService.GetWeaponConfigs();
+        
+       // ArmorItemTypes = ArmorConfigs.
     }
+
+    public List<InventoryItemType> ArmorItemTypes;
+}
+
+public interface IItemCatalog
+{
 }

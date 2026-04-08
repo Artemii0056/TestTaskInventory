@@ -1,4 +1,4 @@
-﻿namespace Inventories.Ammo
+﻿namespace Inventories.Configs.Ammo
 {
     public enum AmmoType
     {

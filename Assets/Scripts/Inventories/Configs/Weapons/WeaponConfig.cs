@@ -1,8 +1,7 @@
-﻿using Inventories.Ammo;
-using Inventories.Configs;
+﻿using Inventories.Configs.Ammo;
 using UnityEngine;
 
-namespace Inventories.Weapons
+namespace Inventories.Configs.Weapons
 {
     [CreateAssetMenu(fileName = nameof(WeaponConfig), menuName = "StaticData/Weapons/" + nameof(WeaponConfig))]
     public class WeaponConfig : ScriptableObject

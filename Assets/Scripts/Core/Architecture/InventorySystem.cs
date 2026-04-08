@@ -1,20 +1,36 @@
 ﻿using System;
-using UnityEngine;
+using System.Linq;
 
 namespace Core.Architecture
 {
     public class InventorySystem
     {
-        private InventoryData _inventoryData;
+        private readonly InventoryData _inventoryData;
 
         public InventorySystem(InventoryData inventoryData)
         {
             _inventoryData = inventoryData;
         }
-
-        public bool TryAddItem(ItemStack itemStack)
+        
+        public bool TryAddItem(ItemStack itemStack, out int slotId)
         {
-            Debug.Log($"{itemStack.InventoryItemType}: {itemStack.Count}");
+            slotId = -1;
+
+            for (int i = 0; i < _inventoryData.Slots.Count; i++)
+            {
+                InventorySlotData slot = _inventoryData.Slots.ToList()[i]; //TODO
+
+                if (slot.IsLocked)
+                    continue;
+
+                if (slot.ItemStack != null)
+                    continue;
+
+                slot.SetItem(itemStack);
+                slotId = i;
+                return true;
+            }
+
             return false;
         }
         
