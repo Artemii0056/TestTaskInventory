@@ -4,10 +4,10 @@ namespace Core
 {
     public class Wallet : IWallet
     {
-        public int Coins { get; private set; }
-
         public Wallet(int coins) =>
             Coins = coins;
+
+        public int Coins { get; private set; }
 
         public void Increase(int amount)
         {
@@ -17,23 +17,29 @@ namespace Core
             Coins += amount;
         }
 
-        public void Decrease(int amount)
+        public bool TrySpend(int amount)
         {
-            if (Coins < amount)
-                throw new Exception("Cannot decrease amount of coins");
-
-            if (amount <= 0)
-                throw new Exception("Cannot increase amount of coins");
+            if (CanSpend(amount) == false)
+                return false;
 
             Coins -= amount;
+            return true;
         }
 
-        public bool Have(int amount) => 
-            Coins >= amount;
+        public bool CanSpend(int amount)
+        {
+            if (amount <= 0)
+                return false;
+
+            return Coins >= amount;
+        }
     }
 
     public interface IWallet
     {
         void Increase(int value);
+        int Coins { get; }
+        bool TrySpend(int amount);
+        bool CanSpend(int amount);
     }
 }

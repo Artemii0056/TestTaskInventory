@@ -1,9 +1,9 @@
 ﻿using System;
-using Core.ActionResults;
 using DefaultNamespace;
 using Inventories.Configs.Ammo.AmmoFactories;
 using Inventories.View;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Core.Architecture
 {
@@ -80,7 +80,7 @@ namespace Core.Architecture
 
              if (result)
                  _debugMessageService.ShowMessage(
-                     $"Добавлено ({ammoStack.Count}) {ammoStack.InventoryItemType} в слот: {slotId}");
+                     $"Добавлено ({ammoStack.Count}) {ammoStack.Type} в слот: {slotId}");
              else
                  _debugMessageService.ShowMessage("Инвентарь полон");
 
@@ -89,7 +89,9 @@ namespace Core.Architecture
 
         private void Refresh()
         {
-            
+            // Object.Instantiate();
+            // _inventoryGridView.Add();
+            //Должен обновлять весь UI
         }
 
         public void Dispose()

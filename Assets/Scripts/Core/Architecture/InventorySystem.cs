@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Core.Architecture
@@ -15,12 +16,15 @@ namespace Core.Architecture
         public bool TryAddItem(ItemStack itemStack, out int slotId)
         {
             slotId = -1;
+            
+            List<InventorySlotData> slots = _inventoryData.Slots.ToList();
+            int count = slots.Count;
 
-            for (int i = 0; i < _inventoryData.Slots.Count; i++)
+            for (int i = 0; i < count; i++)
             {
-                InventorySlotData slot = _inventoryData.Slots.ToList()[i]; //TODO
+                InventorySlotData slot = slots[i]; 
 
-                if (slot.IsLocked)
+                if (slot.IsUnlocked)
                     continue;
 
                 if (slot.ItemStack != null)
