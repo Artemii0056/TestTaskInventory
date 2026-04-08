@@ -13,25 +13,19 @@ namespace Core.Architecture
 
         private int _count;
 
-        public void Show()
-        {
-            //Debug.Log(_count);
-            
-            _slotInfo.gameObject.SetActive(_count > 1);
-
-            _countText.text = _count.ToString();
-        }
-
         public void Init(Sprite icon, int count) 
         {
             if (icon != null) 
                 _icon.sprite = icon;
             
             _count = count;
+        }
+        
+        public void Show()
+        {
+            _slotInfo.gameObject.SetActive(_count > 1);
 
-            // _slotInfo.gameObject.SetActive(count > 1);
-            //
-            // _countText.text = count.ToString();
+            _countText.text = _count.ToString();
         }
     }
 }

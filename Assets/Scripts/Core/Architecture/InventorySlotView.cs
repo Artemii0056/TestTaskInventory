@@ -5,8 +5,8 @@ namespace Core.Architecture
 {
     public class InventorySlotView : MonoBehaviour
     {
-        [FormerlySerializedAs("_openedSlotContentView")] [field: SerializeField] public OpenedSlotContentView OpenedSlotContentView;
-        [FormerlySerializedAs("_lockedSlotContentView")] [field: SerializeField] public LockedSlotContentView LockedSlotContentView;
+        [field: SerializeField] public OpenedSlotContentView OpenedSlotContentView;
+        [field: SerializeField] public LockedSlotContentView LockedSlotContentView;
 
         private void Awake()
         {
