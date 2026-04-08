@@ -14,5 +14,7 @@ namespace Infrastructure.StaticData
         public List<ArmorConfig> GetArmorConfigs();
         Sprite GetSpriteByType(InventoryItemType itemType);
         AmmoConfig GetAmmoConfigByType(InventoryItemType itemType);
+        WeaponConfig GetWeaponConfigByType(InventoryItemType itemType);
+        bool IsItemOfKind(InventoryItemType type, ItemKind kind);
     }
 }

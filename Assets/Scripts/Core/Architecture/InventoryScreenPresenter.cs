@@ -1,6 +1,8 @@
 ﻿using System;
+using Inventories;
 using Inventories.Configs.Ammo.AmmoFactories;
 using Results;
+using Results.DefaultNamespace.Results;
 
 namespace Core.Architecture
 {
@@ -75,9 +77,26 @@ namespace Core.Architecture
 
         private void ShootSelectedWeapon()
         {
-            _inventorySystem.TryShootRandomWeapon();
-            //Получить все слоты с оружием
-            //рандомно шмальнуть
+            ShootResult result = _inventorySystem.TryShootRandomWeapon();
+           
+            if (result.WeaponType == InventoryItemType.None)
+            {
+                _debugMessageService.ShowMessage("Нет оружия");
+                return;
+            }
+
+            if (!result.IsSuccess)
+            {
+                _debugMessageService.ShowMessage($"Нет патронов для {result.WeaponType}");
+                Refresh();
+                return;
+            }
+
+            _debugMessageService.ShowMessage(
+                $"Выстрел из {result.WeaponType}, патроны: {result.AmmoType}, урон: {result.Damage}");
+
+            Refresh();
+
         }
 
         private void DeleteSelectedItem()

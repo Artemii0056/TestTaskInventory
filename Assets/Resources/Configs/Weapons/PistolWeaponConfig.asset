@@ -18,6 +18,7 @@ MonoBehaviour:
     <Description>k__BackingField: 
     <Weight>k__BackingField: 1
     <MaxStack>k__BackingField: 1
+    <Kind>k__BackingField: 3
   <Kind>k__BackingField: 3
   <AmmoType>k__BackingField: 1
   <Damage>k__BackingField: 10

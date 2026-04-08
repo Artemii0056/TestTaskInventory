@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Infrastructure.ResourceLoad;
 using Inventories;
+using Inventories.Configs;
 using Inventories.Configs.Ammo;
 using Inventories.Configs.Armors;
 using Inventories.Configs.Weapons;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Infrastructure.StaticData
@@ -19,6 +19,8 @@ namespace Infrastructure.StaticData
         private List<ArmorConfig> _armorConfigs;
         private List<WeaponConfig> _weaponConfigs;
         
+        private Dictionary<InventoryItemType, InventoryItemData> _itemDataByType;
+        
         public StaticDataService(IResourceLoader resourceLoader)
         {
             _resourceLoader = resourceLoader;
@@ -26,31 +28,48 @@ namespace Infrastructure.StaticData
             LoadAmmoConfigs();
             LoadArmorConfigs();
             LoadWeaponConfigs();
+
+            BuildItemDataDictionary();
+        }
+        
+        private void BuildItemDataDictionary()
+        {
+            _itemDataByType = new Dictionary<InventoryItemType, InventoryItemData>();
+
+            foreach (WeaponConfig config in _weaponConfigs)
+                AddItemData(config.InventoryItemData);
+
+            foreach (AmmoConfig config in _ammoConfigs)
+                AddItemData(config.InventoryItemData);
+
+            foreach (ArmorConfig config in _armorConfigs)
+                AddItemData(config.InventoryItemData);
+        }
+        
+        private void AddItemData(InventoryItemData data)
+        {
+            if (_itemDataByType.ContainsKey(data.Type))
+                throw new Exception($"Duplicate item type: {data.Type}");
+
+            _itemDataByType.Add(data.Type, data);
+        }
+        
+        public InventoryItemData GetItemDataByType(InventoryItemType type)
+        {
+            if (_itemDataByType.TryGetValue(type, out var data))
+                return data;
+
+            throw new Exception($"ItemData not found for type: {type}");
+        }
+        
+        public bool IsItemOfKind(InventoryItemType type, ItemKind kind)
+        {
+            return GetItemDataByType(type).Kind == kind;
         }
 
         public Sprite GetSpriteByType(InventoryItemType itemType)
         {
-            foreach (var config in _ammoConfigs)
-            {
-                if (config.InventoryItemData.Type == itemType)
-                    return config.InventoryItemData.Sprite;
-            }
-            
-            foreach (var config in _armorConfigs)
-            {
-                if (config.InventoryItemData.Type == itemType)
-                    return config.InventoryItemData.Sprite;
-            }
-            
-            foreach (var config in _weaponConfigs)
-            {
-                if (config.InventoryItemData.Type == itemType)
-                    return config.InventoryItemData.Sprite;
-            }
-
-            Debug.Log(itemType);
-            
-            throw new Exception("Не нашел");
+            return GetItemDataByType(itemType).Sprite;
         }
 
         public AmmoConfig GetAmmoConfigByType(InventoryItemType itemType)
@@ -63,7 +82,18 @@ namespace Infrastructure.StaticData
                 }
             }
 
-            throw new Exception("123");
+            throw new Exception($"AmmoConfig not found for type: {itemType}");
+        }
+
+        public WeaponConfig GetWeaponConfigByType(InventoryItemType itemType)
+        {
+            foreach (var config in _weaponConfigs)
+            {
+                if (config.InventoryItemData.Type == itemType)
+                    return config;
+            }
+            
+            throw new Exception($"WeaponConfig not found for type: {itemType}");
         }
 
         public List<AmmoConfig> GetAmmoConfigs() =>  
