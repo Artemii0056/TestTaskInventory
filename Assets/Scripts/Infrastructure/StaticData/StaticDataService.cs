@@ -54,6 +54,17 @@ namespace Infrastructure.StaticData
             _itemDataByType.Add(data.Type, data);
         }
         
+        public InventoryItemType GetAmmoItemType(AmmoType ammoType)
+        {
+            foreach (AmmoConfig config in GetAmmoConfigs())
+            {
+                if (config.AmmoType == ammoType)
+                    return config.InventoryItemData.Type;
+            }
+
+            return InventoryItemType.None;
+        }
+        
         public InventoryItemData GetItemDataByType(InventoryItemType type)
         {
             if (_itemDataByType.TryGetValue(type, out var data))

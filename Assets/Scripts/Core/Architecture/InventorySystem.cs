@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
+using DefaultNamespace;
 using Infrastructure.StaticData;
 using Inventories;
 using Inventories.Configs;
-using Inventories.Configs.Ammo;
 using Inventories.Configs.Ammo.AmmoFactories;
 using Inventories.Configs.Weapons;
 using Results;
 using Results.DefaultNamespace.Results;
-using UnityEngine;
 
 namespace Core.Architecture
 {
@@ -19,14 +16,17 @@ namespace Core.Architecture
         private readonly InventoryData _inventoryData;
         private readonly IStaticDataService _staticDataService;
         private readonly IRandomService _randomService;
+        private readonly InventorySlotSelector _inventorySlotSelector;
 
         public InventorySystem(
             InventoryData inventoryData,
-            IStaticDataService staticDataService, IRandomService randomService)
+            IStaticDataService staticDataService,
+            IRandomService randomService)
         {
             _inventoryData = inventoryData;
             _staticDataService = staticDataService;
             _randomService = randomService;
+            _inventorySlotSelector = new InventorySlotSelector(_inventoryData, _staticDataService);
         }
 
         public IReadOnlyList<InventorySlotData> Slots => _inventoryData.Slots;
@@ -41,184 +41,84 @@ namespace Core.Architecture
                 .InventoryItemData.MaxStack;
 
             int requestedAmount = amount;
+            int remainingAmount = amount;
+            List<SlotChange> changes = new();
 
-            int remainingToAdd = amount;
-            List<SlotChange> changes = new List<SlotChange>();
+            int toAdd;
 
-            while (remainingToAdd > 0)
+            while (remainingAmount > 0)
             {
-                if (TryFindFirstNotFullStack(ammoType, maxStack, out InventorySlotData slotWithAmmo))
+                if (_inventorySlotSelector.TryFindNotFullStack(ammoType, maxStack, out InventorySlotData slotWithAmmo))
                 {
                     int startCount = slotWithAmmo.ItemStack.Count;
                     int freeSpace = maxStack - startCount;
-                    int toAdd = Math.Min(freeSpace, remainingToAdd);
+                    toAdd = Math.Min(freeSpace, remainingAmount);
 
-                    remainingToAdd -= toAdd;
+                    remainingAmount -= toAdd;
                     slotWithAmmo.ItemStack.Increase(toAdd);
-                    changes.Add(new SlotChange(slotWithAmmo.Id, ammoType, startCount, slotWithAmmo.ItemStack.Count));
+
+                    changes.Add(new SlotChange(
+                        slotWithAmmo.Id,
+                        ammoType,
+                        startCount,
+                        slotWithAmmo.ItemStack.Count));
+
                     continue;
                 }
 
-                if (TryFindFirstEmptyUnlockedSlot(out InventorySlotData emptyUnlockedSlot) == false)
+                if (!_inventorySlotSelector.TryFindEmptyUnlockedSlot(out InventorySlotData emptySlot))
                     break;
 
-                int toAddToNewStack = Math.Min(maxStack, remainingToAdd);
-                remainingToAdd -= toAddToNewStack;
-                emptyUnlockedSlot.SetItem(new ItemStack(ammoType, toAddToNewStack));
-                changes.Add(new SlotChange(emptyUnlockedSlot.Id, ammoType, 0, emptyUnlockedSlot.ItemStack.Count));
+                toAdd = Math.Min(maxStack, remainingAmount);
+                remainingAmount -= toAdd;
+                emptySlot.SetItem(new ItemStack(ammoType, toAdd));
+
+                changes.Add(new SlotChange(
+                    emptySlot.Id,
+                    ammoType,
+                    0,
+                    emptySlot.ItemStack.Count));
             }
 
-            int addedAmount = requestedAmount - remainingToAdd;
-
-            return new AddAmmoResult(requestedAmount, addedAmount, remainingToAdd, changes);
+            int addedAmount = requestedAmount - remainingAmount;
+            return new AddAmmoResult(requestedAmount, addedAmount, remainingAmount, changes);
         }
 
-        private bool TryFindFirstEmptyUnlockedSlot(out InventorySlotData data)
+        public bool TryAddItem(ItemStack itemStack, out InventorySlotData changedSlot)
         {
-            data = null;
+            changedSlot = null;
 
-            foreach (InventorySlotData slot in _inventoryData.Slots)
-            {
-                if (!slot.IsUnlocked)
-                    continue;
-
-                if (slot.ItemStack != null)
-                    continue;
-
-                data = slot;
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool TryFindFirstNotFullStack(InventoryItemType type, int maxStack, out InventorySlotData slotToFind)
-        {
-            slotToFind = null;
-
-            foreach (InventorySlotData slot in _inventoryData.Slots)
-            {
-                if (slot.IsUnlocked == false)
-                    continue;
-
-                if (slot.ItemStack == null)
-                    continue;
-
-                if (slot.ItemStack.Type != type)
-                    continue;
-
-                if (slot.ItemStack.Count >= maxStack)
-                    continue;
-
-                slotToFind = slot;
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool TryFindBusySlots(out List<InventorySlotData> slots)
-        {
-            slots = new List<InventorySlotData>();
-
-            foreach (InventorySlotData slot in _inventoryData.Slots)
-            {
-                if (slot.HasItem)
-                    slots.Add(slot);
-            }
-
-            return slots.Any();
-        }
-
-        private bool TryFindWeapons(out List<InventorySlotData> slots)
-        {
-            List<InventoryItemType> itemTypes = new List<InventoryItemType>();
-
-            foreach (var config in _staticDataService.GetWeaponConfigs())
-            {
-                itemTypes.Add(config.InventoryItemData.Type);
-            }
-
-            slots = new List<InventorySlotData>();
-
-            foreach (InventorySlotData slot in
-                     _inventoryData.Slots) //В идеале, тут мы должны собрать именно только пушки
-            {
-                if (slot.ItemStack == null)
-                    continue;
-
-                foreach (var type in itemTypes)
-                {
-                    if (slot.ItemStack.Type == type)
-                    {
-                        slots.Add(slot);
-                        break;
-                    }
-                }
-            }
-
-            return slots.Any();
-        }
-
-        public bool TryDeleteItem(out DeleteItemResult result)
-            //TODO Хочу добавить ячейке состояние - Занята/Свободно/Заблокирована
-        {
-            result = null;
-
-            if (TryFindBusySlots(out List<InventorySlotData> slotDatas) == false)
-                return false;
-
-            var slot = slotDatas[_randomService.GenerateValue(slotDatas.Count)];
-
-            result = new DeleteItemResult(slot.ItemStack.Count, slot.ItemStack.Type, slot.Id);
-            slot.Clear();
-
-            return true;
-        }
-
-        public bool TryAddItem(ItemStack itemStack, out InventorySlotData slotChanged)
-        {
-            slotChanged = null;
-
-            if (TryFindFirstEmptyUnlockedSlot(out InventorySlotData slot) == false)
+            if (!_inventorySlotSelector.TryFindEmptyUnlockedSlot(out InventorySlotData slot))
                 return false;
 
             slot.SetItem(new ItemStack(itemStack.Type, itemStack.Count));
-            slotChanged = slot;
+            changedSlot = slot;
             return true;
         }
 
-        private bool TryFindSlotsWithAmmo(out List<InventorySlotData> slots) 
-            //В идеале, тут мы должны собрать именно только патроны
+        public bool TryDeleteItem(out DeleteItemResult result)
         {
-            slots = new List<InventorySlotData>();
+            result = null;
 
-            List<InventoryItemType> itemTypes = new List<InventoryItemType>();
+            List<InventorySlotData> busySlots = _inventorySlotSelector.FindBusySlots();
 
-            foreach (var config in _staticDataService.GetAmmoConfigs())
-                itemTypes.Add(config.InventoryItemData.Type);
+            if (busySlots.Count == 0)
+                return false;
 
-            foreach (InventorySlotData slot in _inventoryData.Slots)
-            {
-                if (slot.ItemStack == null)
-                    continue;
+            InventorySlotData slot = busySlots[_randomService.GenerateValue(busySlots.Count)];
 
-                foreach (var type in itemTypes)
-                {
-                    if (slot.ItemStack.Type == type)
-                    {
-                        slots.Add(slot);
-                        break;
-                    }
-                }
-            }
+            result = new DeleteItemResult(
+                slot.ItemStack.Count,
+                slot.ItemStack.Type,
+                slot.Id);
 
-            return slots.Any();
+            slot.Clear();
+            return true;
         }
-        
-        public ShootResult TryShootRandomWeapon()
+
+        public ShootResult ShootRandomWeapon()
         {
-            List<InventorySlotData> weapons = FindWeapons();
+            List<InventorySlotData> weapons = _inventorySlotSelector.FindSlotsByKind(ItemKind.Weapon);
 
             if (weapons.Count == 0)
                 return new ShootResult(false, InventoryItemType.None, InventoryItemType.None, 0);
@@ -227,14 +127,14 @@ namespace Core.Architecture
             InventoryItemType weaponType = weaponSlot.ItemStack.Type;
 
             WeaponConfig weaponConfig = _staticDataService.GetWeaponConfigByType(weaponType);
-            InventoryItemType ammoType = GetAmmoItemType(weaponConfig.AmmoType);
+            InventoryItemType ammoType = _staticDataService.GetAmmoItemType(weaponConfig.AmmoType);
 
-            InventorySlotData ammoSlot = FindFirstAmmoSlot(ammoType);
+            InventorySlotData ammoSlot = _inventorySlotSelector.FindFirstSlotByItemType(ammoType);
 
             if (ammoSlot == null)
                 return new ShootResult(false, weaponType, ammoType, weaponConfig.Damage);
 
-            DecreaseAmmo(ammoSlot);
+            ConsumeOneAmmo(ammoSlot);
 
             return new ShootResult(
                 true,
@@ -243,84 +143,14 @@ namespace Core.Architecture
                 weaponConfig.Damage,
                 ammoSlot.Id);
         }
-        
-        private List<InventorySlotData> FindWeapons()
-        {
-            List<InventorySlotData> result = new();
 
-            foreach (InventorySlotData slot in _inventoryData.Slots)
-            {
-                if (!slot.IsUnlocked)
-                    continue;
-
-                if (slot.ItemStack == null)
-                    continue;
-
-                if (!_staticDataService.IsItemOfKind(slot.ItemStack.Type, ItemKind.Weapon))
-                    continue;
-
-                result.Add(slot);
-            }
-
-            return result;
-        }
-        
-        private InventorySlotData FindFirstAmmoSlot(InventoryItemType ammoType)
-        {
-            foreach (InventorySlotData slot in _inventoryData.Slots)
-            {
-                if (!slot.IsUnlocked)
-                    continue;
-
-                if (slot.ItemStack == null)
-                    continue;
-
-                if (slot.ItemStack.Type != ammoType)
-                    continue;
-
-                if (slot.ItemStack.Count <= 0)
-                    continue;
-
-                return slot;
-            }
-
-            return null;
-        }
-        
-        private InventoryItemType GetAmmoItemType(AmmoType ammoType)
-        {
-            foreach (AmmoConfig config in _staticDataService.GetAmmoConfigs())
-            {
-                if (config.AmmoType == ammoType)
-                    return config.InventoryItemData.Type;
-            }
-
-            return InventoryItemType.None;
-        }
-        
-        private void DecreaseAmmo(InventorySlotData ammoSlot)
-        {
-            int newCount = ammoSlot.ItemStack.Count - 1;
-
-            if (newCount <= 0)
-            {
-                ammoSlot.Clear();
-                return;
-            }
-
-            ammoSlot.ItemStack.Decrease(1);
-        }
-
-        public float CalculateWeight()
+        public float GetTotalWeight()
         {
             float totalWeight = 0f;
 
             foreach (InventorySlotData slot in _inventoryData.Slots)
             {
-                if (!slot.IsUnlocked)
-                    continue;
-
-                if (slot.ItemStack == null)
+                if (!slot.IsUnlocked || slot.ItemStack == null)
                     continue;
 
                 InventoryItemData itemData = _staticDataService.GetItemDataByType(slot.ItemStack.Type);
@@ -328,6 +158,17 @@ namespace Core.Architecture
             }
 
             return totalWeight;
+        }
+
+        private void ConsumeOneAmmo(InventorySlotData ammoSlot)
+        {
+            if (ammoSlot.ItemStack.Count <= 1)
+            {
+                ammoSlot.Clear();
+                return;
+            }
+
+            ammoSlot.ItemStack.Decrease(1);
         }
     }
 }

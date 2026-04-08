@@ -18,5 +18,6 @@ namespace Infrastructure.StaticData
         WeaponConfig GetWeaponConfigByType(InventoryItemType itemType);
         bool IsItemOfKind(InventoryItemType type, ItemKind kind);
         InventoryItemData GetItemDataByType(InventoryItemType type);
+        InventoryItemType GetAmmoItemType(AmmoType ammoType);
     }
 }
