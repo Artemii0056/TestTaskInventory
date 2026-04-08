@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using Core;
 using Infrastructure.StaticData;
+using Inventories.Configs.Ammo;
+using Services.RandomServices;
 
-namespace Inventories.Configs.Ammo.AmmoFactories
+namespace Services.AmmoFactories
 {
     public class AmmoFactory : IAmmoFactory
     {

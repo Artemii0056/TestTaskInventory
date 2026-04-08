@@ -2,7 +2,12 @@
 using Core.Architecture;
 using Infrastructure.ResourceLoad;
 using Infrastructure.StaticData;
-using Inventories.Configs.Ammo.AmmoFactories;
+using Services.AmmoFactories;
+using Services.Debbuger;
+using Services.IdGenerator;
+using Services.InventoryFactory;
+using Services.ItemsFactory;
+using Services.RandomServices;
 using UnityEngine;
 
 public class Bootstrapper : MonoBehaviour

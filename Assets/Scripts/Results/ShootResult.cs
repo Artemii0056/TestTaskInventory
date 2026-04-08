@@ -1,7 +1,7 @@
-﻿namespace Results
-{
-    using Inventories;
+﻿using Inventories;
 
+namespace Results
+{
     namespace DefaultNamespace.Results
     {
         public class ShootResult

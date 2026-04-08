@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Inventories.Configs.Ammo.AmmoFactories
+namespace Services.RandomServices
 {
     public class RandomService : IRandomService
     {

@@ -1,4 +1,7 @@
-﻿public interface IUniqueIdService
+﻿namespace Services.IdGenerator
 {
-    public int GetNextId();
+    public interface IUniqueIdService
+    {
+        public int GetNextId();
+    }
 }

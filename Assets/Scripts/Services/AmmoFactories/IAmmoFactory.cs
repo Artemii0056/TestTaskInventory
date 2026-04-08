@@ -1,6 +1,6 @@
 ﻿using Core;
 
-namespace Inventories.Configs.Ammo.AmmoFactories
+namespace Services.AmmoFactories
 {
     public interface IAmmoFactory
     {

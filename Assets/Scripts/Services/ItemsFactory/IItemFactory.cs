@@ -1,6 +1,9 @@
 ﻿using Core;
 
-public interface IItemFactory
+namespace Services.ItemsFactory
 {
-    ItemStack CreateRandom();
+    public interface IItemFactory
+    {
+        ItemStack CreateRandom();
+    }
 }

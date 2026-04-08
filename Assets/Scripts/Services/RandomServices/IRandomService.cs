@@ -1,4 +1,4 @@
-﻿namespace Inventories.Configs.Ammo.AmmoFactories
+﻿namespace Services.RandomServices
 {
     public interface IRandomService
     {

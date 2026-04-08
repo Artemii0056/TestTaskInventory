@@ -3,7 +3,7 @@ using Core;
 using Infrastructure.StaticData;
 using Inventories;
 
-namespace DefaultNamespace
+namespace Services
 {
     public class InventorySlotSelector
     {

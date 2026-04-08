@@ -1,27 +1,30 @@
 ﻿using System.Collections.Generic;
 using Core;
 using Infrastructure.StaticData;
-using Inventories.Configs.Ammo.AmmoFactories;
+using Services.RandomServices;
 
-public class ItemFactory : IItemFactory
+namespace Services.ItemsFactory
 {
-    private readonly IRandomService _randomService;
-        
-    private readonly List<IItemConfig> _itemConfigs;
-        
-    public ItemFactory(IStaticDataService staticDataService, IRandomService randomService)
+    public class ItemFactory : IItemFactory
     {
-        _randomService = randomService;
-        _itemConfigs = new List<IItemConfig>();
+        private readonly IRandomService _randomService;
+        
+        private readonly List<IItemConfig> _itemConfigs;
+        
+        public ItemFactory(IStaticDataService staticDataService, IRandomService randomService)
+        {
+            _randomService = randomService;
+            _itemConfigs = new List<IItemConfig>();
 
-        _itemConfigs.AddRange(staticDataService.GetArmorConfigs());
-        _itemConfigs.AddRange(staticDataService.GetWeaponConfigs());
-    }
+            _itemConfigs.AddRange(staticDataService.GetArmorConfigs());
+            _itemConfigs.AddRange(staticDataService.GetWeaponConfigs());
+        }
 
-    public ItemStack CreateRandom()
-    {
-        IItemConfig config = _itemConfigs[_randomService.GenerateValue(_itemConfigs.Count)];
+        public ItemStack CreateRandom()
+        {
+            IItemConfig config = _itemConfigs[_randomService.GenerateValue(_itemConfigs.Count)];
 
-        return new ItemStack(config.InventoryItemData.Type, config.InventoryItemData.MaxStack);
+            return new ItemStack(config.InventoryItemData.Type, config.InventoryItemData.MaxStack);
+        }
     }
 }
