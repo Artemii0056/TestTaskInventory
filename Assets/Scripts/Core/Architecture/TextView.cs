@@ -9,7 +9,7 @@ namespace Core.Architecture
 
         [SerializeField] private TextMeshProUGUI _text;
 
-        public void Setup(TextMeshProUGUI text) =>
-            _text.text = $"{_baseText}: {text.text}";
+        public void Setup(string text) =>
+            _text.text = $"{_baseText}: {text}";
     }
 }

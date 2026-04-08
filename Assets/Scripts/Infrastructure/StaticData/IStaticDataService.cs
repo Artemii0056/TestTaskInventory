@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Inventories;
+using Inventories.Configs;
 using Inventories.Configs.Ammo;
 using Inventories.Configs.Armors;
 using Inventories.Configs.Weapons;
@@ -16,5 +17,6 @@ namespace Infrastructure.StaticData
         AmmoConfig GetAmmoConfigByType(InventoryItemType itemType);
         WeaponConfig GetWeaponConfigByType(InventoryItemType itemType);
         bool IsItemOfKind(InventoryItemType type, ItemKind kind);
+        InventoryItemData GetItemDataByType(InventoryItemType type);
     }
 }

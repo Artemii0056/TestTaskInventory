@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Globalization;
+using UnityEngine;
 
 namespace Core.Architecture
 {
@@ -6,7 +7,11 @@ namespace Core.Architecture
     {
         [SerializeField] private TextView _moneyView;
         [SerializeField] private TextView _weightView;
-        
-        //Будет показывать деньги и вес
+
+        public void DrawMoney(float value) => 
+            _moneyView.Setup(value.ToString(CultureInfo.InvariantCulture));
+
+        public void DrawWeight(float weight) => 
+            _weightView.Setup(weight.ToString(CultureInfo.InvariantCulture));
     }
 }

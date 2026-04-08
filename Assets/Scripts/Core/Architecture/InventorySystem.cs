@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using Infrastructure.StaticData;
 using Inventories;
+using Inventories.Configs;
 using Inventories.Configs.Ammo;
 using Inventories.Configs.Ammo.AmmoFactories;
 using Inventories.Configs.Weapons;
@@ -308,6 +309,25 @@ namespace Core.Architecture
             }
 
             ammoSlot.ItemStack.Decrease(1);
+        }
+
+        public float CalculateWeight()
+        {
+            float totalWeight = 0f;
+
+            foreach (InventorySlotData slot in _inventoryData.Slots)
+            {
+                if (!slot.IsUnlocked)
+                    continue;
+
+                if (slot.ItemStack == null)
+                    continue;
+
+                InventoryItemData itemData = _staticDataService.GetItemDataByType(slot.ItemStack.Type);
+                totalWeight += itemData.Weight * slot.ItemStack.Count;
+            }
+
+            return totalWeight;
         }
     }
 }

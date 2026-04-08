@@ -171,6 +171,9 @@ namespace Core.Architecture
 
                 slotView.Show(slot.IsUnlocked);
             }
+            
+            _inventoryInfoView.DrawMoney(_wallet.Coins);
+            _inventoryInfoView.DrawWeight(_inventorySystem.CalculateWeight());
         }
 
         public void Dispose()
