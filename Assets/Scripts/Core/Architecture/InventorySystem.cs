@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.UI;
 
 namespace Core.Architecture
 {
@@ -12,6 +13,8 @@ namespace Core.Architecture
         {
             _inventoryData = inventoryData;
         }
+        
+        public IReadOnlyList<InventorySlotData> Slots => _inventoryData.Slots;
         
         public bool TryAddItem(ItemStack itemStack, out int slotId)
         {

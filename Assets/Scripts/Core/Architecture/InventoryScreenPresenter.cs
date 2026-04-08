@@ -2,8 +2,6 @@
 using DefaultNamespace;
 using Inventories.Configs.Ammo.AmmoFactories;
 using Inventories.View;
-using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Core.Architecture
 {
@@ -12,20 +10,21 @@ namespace Core.Architecture
         private InventoryActionsView _inventoryActionsView;
         private InventoryGridView _inventoryGridView;
         private InventoryInfoView _inventoryInfoView;
-        
+
         private InventorySystem _inventorySystem;
         private IWallet _wallet;
         private IAmmoFactory _ammoFactory;
         private IDebugMessageService _debugMessageService;
+        private InventorySlotViewFactory _inventorySlotViewFactory;
 
         public InventoryScreenPresenter(
-            InventoryActionsView inventoryActionsView, 
+            InventoryActionsView inventoryActionsView,
             InventoryGridView inventoryGridView,
-            InventoryInfoView inventoryInfoView, 
-            InventorySystem inventorySystem, 
-            IWallet wallet, 
-            IAmmoFactory ammoFactory, 
-            IDebugMessageService debugMessageService)
+            InventoryInfoView inventoryInfoView,
+            InventorySystem inventorySystem,
+            IWallet wallet,
+            IAmmoFactory ammoFactory,
+            IDebugMessageService debugMessageService, InventorySlotViewFactory inventorySlotViewFactory)
         {
             _inventoryActionsView = inventoryActionsView;
             _inventoryGridView = inventoryGridView;
@@ -34,10 +33,11 @@ namespace Core.Architecture
             _wallet = wallet;
             _ammoFactory = ammoFactory;
             _debugMessageService = debugMessageService;
+            _inventorySlotViewFactory = inventorySlotViewFactory;
 
             _inventoryActionsView.ActionClicked += OnActionClicked;
         }
-        
+
         private void OnActionClicked(InventoryActionType actionType)
         {
             switch (actionType)
@@ -55,7 +55,7 @@ namespace Core.Architecture
                     break;
 
                 case InventoryActionType.Shoot:
-                   // ShootSelectedWeapon();
+                    // ShootSelectedWeapon();
                     break;
 
                 case InventoryActionType.AddMoney:
@@ -74,24 +74,40 @@ namespace Core.Architecture
 
         private void AddAmmoAction()
         {
-             ItemStack ammoStack = _ammoFactory.CreateRandom();
-             
-             bool result =  _inventorySystem.TryAddItem(ammoStack, out int slotId);
+            ItemStack ammoStack = _ammoFactory.CreateRandom();
 
-             if (result)
-                 _debugMessageService.ShowMessage(
-                     $"Добавлено ({ammoStack.Count}) {ammoStack.Type} в слот: {slotId}");
-             else
-                 _debugMessageService.ShowMessage("Инвентарь полон");
+            bool result = _inventorySystem.TryAddItem(ammoStack, out int slotId);
 
-             Refresh();
+            if (result)
+                _debugMessageService.ShowMessage(
+                    $"Добавлено ({ammoStack.Count}) {ammoStack.Type} в слот: {slotId}");
+            else
+                _debugMessageService.ShowMessage("Инвентарь полон");
+
+            Refresh();
         }
 
-        private void Refresh()
+        public void Refresh()
         {
-            // Object.Instantiate();
-            // _inventoryGridView.Add();
-            //Должен обновлять весь UI
+            _inventoryGridView.DeleteAll();
+
+            InventorySlotView slotView;
+
+            foreach (var slot in _inventorySystem.Slots)
+            {
+                if (slot.ItemStack == null)
+                {
+                    slotView = _inventorySlotViewFactory.Create(slot.IsUnlocked);
+                    _inventoryGridView.Add(slotView);
+                }
+                else
+                {
+                    slotView = _inventorySlotViewFactory.Create(slot.IsUnlocked, slot.ItemStack.Type, slot.ItemStack.Count);
+                    _inventoryGridView.Add(slotView);
+                }
+                
+                slotView.Show(slot.IsUnlocked);
+            }
         }
 
         public void Dispose()

@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Infrastructure.ResourceLoad;
+using Inventories;
 using Inventories.Configs.Ammo;
 using Inventories.Configs.Armors;
 using Inventories.Configs.Weapons;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Infrastructure.StaticData
@@ -15,7 +18,7 @@ namespace Infrastructure.StaticData
         private List<AmmoConfig> _ammoConfigs;
         private List<ArmorConfig> _armorConfigs;
         private List<WeaponConfig> _weaponConfigs;
-
+        
         public StaticDataService(IResourceLoader resourceLoader)
         {
             _resourceLoader = resourceLoader;
@@ -23,11 +26,31 @@ namespace Infrastructure.StaticData
             LoadAmmoConfigs();
             LoadArmorConfigs();
             LoadWeaponConfigs();
+        }
+
+        public Sprite GetSpriteByType(InventoryItemType itemType)
+        {
+            foreach (var config in _ammoConfigs)
+            {
+                if (config.InventoryItemData.Type == itemType)
+                    return config.InventoryItemData.Sprite;
+            }
             
-            Debug.Log("Static data service initialized");
-            Debug.Log(_ammoConfigs.Count());
-            Debug.Log(_armorConfigs.Count());
-            Debug.Log(_weaponConfigs.Count());
+            foreach (var config in _armorConfigs)
+            {
+                if (config.InventoryItemData.Type == itemType)
+                    return config.InventoryItemData.Sprite;
+            }
+            
+            foreach (var config in _weaponConfigs)
+            {
+                if (config.InventoryItemData.Type == itemType)
+                    return config.InventoryItemData.Sprite;
+            }
+
+            Debug.Log(itemType);
+            
+            throw new Exception("Не нашел");
         }
 
         public List<AmmoConfig> GetAmmoConfigs() =>  

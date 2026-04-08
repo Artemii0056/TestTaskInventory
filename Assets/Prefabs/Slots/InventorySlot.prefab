@@ -291,8 +291,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6a2f7a94fef4c7dab49b230db1503dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _openedSlotContentView: {fileID: 7681120475982661943}
-  _lockedSlotContentView: {fileID: 6671437983844322159}
+  OpenedSlotContentView: {fileID: 7681120475982661943}
+  LockedSlotContentView: {fileID: 6671437983844322159}
 --- !u!1 &3761333977821687544
 GameObject:
   m_ObjectHideFlags: 0
@@ -687,7 +687,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '10
+  m_text: '0
 
 '
   m_isRightToLeft: 0

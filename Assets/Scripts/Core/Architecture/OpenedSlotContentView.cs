@@ -1,5 +1,4 @@
-﻿using Inventories;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,21 +8,30 @@ namespace Core.Architecture
     {
         [SerializeField] private Image _icon;
         [SerializeField] private TextMeshProUGUI _countText;
-        
+
         [SerializeField] private InventorySlotInfo _slotInfo;
 
-        public void Render(InventoryItemType itemType, int count) //TODO Тут нужен сервис передающий нуюное вью взависимости от типа!
+        private int _count;
+
+        public void Show()
         {
-            bool isEmpty = itemType == InventoryItemType.None;
+            //Debug.Log(_count);
+            
+            _slotInfo.gameObject.SetActive(_count > 1);
 
-            _icon.gameObject.SetActive(isEmpty == false);
-            _slotInfo.gameObject.SetActive(isEmpty == false && count > 1);
+            _countText.text = _count.ToString();
+        }
 
-            if (!isEmpty)
-            {
-                //_icon.sprite =  //TODO Тут нужен сервис передающий нуюное вью взависимости от типа!
-                _countText.text = count.ToString();
-            }
+        public void Init(Sprite icon, int count) 
+        {
+            if (icon != null) 
+                _icon.sprite = icon;
+            
+            _count = count;
+
+            // _slotInfo.gameObject.SetActive(count > 1);
+            //
+            // _countText.text = count.ToString();
         }
     }
 }

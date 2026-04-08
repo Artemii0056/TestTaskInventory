@@ -12,6 +12,8 @@ public class Bootstrapper : MonoBehaviour
     [SerializeField] private InventoryActionsView _inventoryActionsView;
     [SerializeField] private InventoryGridView _inventoryGridView;
     [SerializeField] private InventoryInfoView _inventoryInfoView;
+    
+    [SerializeField] private InventorySlotView _inventorySlotViewPrefab;
 
     private int _openedCount;
     
@@ -25,11 +27,13 @@ public class Bootstrapper : MonoBehaviour
 
     public void Init()
     {
+        
         IUniqueIdService uniqueIdService = new UniqueIdService();
         IInventoryFactory factory = new InventorySystemFactory(uniqueIdService);
         
         ResourceLoader resourceLoader = new ResourceLoader();
         IStaticDataService staticDataService = new StaticDataService(resourceLoader);
+        InventorySlotViewFactory inventorySlotViewFactory = new InventorySlotViewFactory(_inventorySlotViewPrefab, staticDataService);
             
         ItemCatalog itemCatalog = new ItemCatalog(staticDataService);
         IRandomService randomService = new RandomService();
@@ -40,8 +44,10 @@ public class Bootstrapper : MonoBehaviour
         
         Wallet wallet = new Wallet(0);
 
-        InventoryScreenPresenter presenter = new InventoryScreenPresenter(_inventoryActionsView, _inventoryGridView, _inventoryInfoView, inventorySystem, wallet, ammoFactory, debugMessageService);
+        InventoryScreenPresenter presenter = new InventoryScreenPresenter(_inventoryActionsView, _inventoryGridView, _inventoryInfoView, inventorySystem, wallet, ammoFactory, debugMessageService, inventorySlotViewFactory);
         _inventoryScreenPresenter = presenter;
+        
+        presenter.Refresh();
     }
 
     private void OnDisable()

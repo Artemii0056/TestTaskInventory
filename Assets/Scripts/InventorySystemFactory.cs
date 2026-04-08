@@ -15,11 +15,11 @@ namespace DefaultNamespace
         {
             List<InventorySlotData> slots = new List<InventorySlotData>();
             
-            FillPart(openedCount, slots, true);
+            FillPart(openedCount, slots, false);
             
             int remainingCount = allCount - openedCount;
             
-            FillPart(remainingCount, slots, false);
+            FillPart(remainingCount, slots, true);
             
             InventoryData data = new InventoryData(slots);
             

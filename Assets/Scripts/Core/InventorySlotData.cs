@@ -19,7 +19,7 @@ namespace Core
         
         public void SetItem(ItemStack itemStack)
         {
-            if (IsUnlocked == false)
+            if (IsUnlocked)
                 throw new InvalidOperationException("Slot is locked");
         
             if (itemStack == null)
