@@ -35,6 +35,7 @@ namespace Bootstrap
 
         public void Init()
         {
+            Wallet wallet = new Wallet(0);
             ResourceLoader resourceLoader = new ResourceLoader();
             IStaticDataService staticDataService = new StaticDataService(resourceLoader);
             IRandomService randomService = new RandomService();
@@ -42,20 +43,19 @@ namespace Bootstrap
 
             IUniqueIdService uniqueIdService = new UniqueIdService();
 
-            IInventoryFactory factory = new InventorySystemFactory(uniqueIdService, staticDataService, randomService);
+            IInventoryFactory factory = new InventorySystemFactory(uniqueIdService, staticDataService, randomService, wallet);
             InventorySlotViewFactory inventorySlotViewFactory =
-                new InventorySlotViewFactory(_inventorySlotViewPrefab, staticDataService);
+                new InventorySlotViewFactory(_inventorySlotViewPrefab);
 
             IAmmoFactory ammoFactory = new AmmoFactory(randomService, staticDataService);
 
             InventorySystem inventorySystem = factory.Create(50, _openedCount);
             IDebugMessageService debugMessageService = new DebugMessageService();
 
-            Wallet wallet = new Wallet(0);
 
             InventoryScreenPresenter presenter = new InventoryScreenPresenter(_inventoryActionsView, _inventoryGridView,
                 _inventoryInfoView, inventorySystem, wallet, ammoFactory, debugMessageService, inventorySlotViewFactory,
-                itemFactory, randomService);
+                itemFactory, randomService, staticDataService);
             _inventoryScreenPresenter = presenter;
 
             presenter.Refresh();

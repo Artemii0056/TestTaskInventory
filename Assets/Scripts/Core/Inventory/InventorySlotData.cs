@@ -16,6 +16,7 @@ namespace Core.Inventory
 
         public bool IsEmpty => ItemStack == null;
         public bool HasItem => ItemStack != null;
+        
 
         public void SetItem(ItemStack itemStack)
         {

@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using Core;
 using Core.Inventory;
 using Core.Results;
 using Core.Results.DefaultNamespace.Results;
 using Core.Systems;
 using Core.Wallets;
+using Infrastructure.StaticData;
 using Services.AmmoFactories;
 using Services.Debbuger;
 using Services.ItemsFactory;
@@ -27,6 +29,9 @@ namespace UI.InventoryScreen.Presenters
         private readonly InventorySlotViewFactory _inventorySlotViewFactory;
         private readonly IItemFactory _itemFactory;
         private readonly IRandomService _randomService;
+        private readonly IStaticDataService _staticDataService;
+        
+        private List<SlotPrice> _slotPriceList;
 
         public InventoryScreenPresenter(
             InventoryActionsView inventoryActionsView,
@@ -38,7 +43,8 @@ namespace UI.InventoryScreen.Presenters
             IDebugMessageService debugMessageService,
             InventorySlotViewFactory inventorySlotViewFactory,
             IItemFactory itemFactory,
-            IRandomService randomService)
+            IRandomService randomService, 
+            IStaticDataService staticDataService)
         {
             _inventoryActionsView = inventoryActionsView;
             _inventoryGridView = inventoryGridView;
@@ -50,6 +56,7 @@ namespace UI.InventoryScreen.Presenters
             _inventorySlotViewFactory = inventorySlotViewFactory;
             _itemFactory = itemFactory;
             _randomService = randomService;
+            _staticDataService = staticDataService;
 
             _inventoryActionsView.ActionClicked += OnActionClicked;
         }
@@ -162,13 +169,68 @@ namespace UI.InventoryScreen.Presenters
 
         private void RefreshGrid()
         {
+            foreach (var slot in _inventoryGridView.Slots)
+            {
+                slot.Clicked -= OnSlotClicked;
+            }
+            
             _inventoryGridView.DeleteAll();
 
-            foreach (InventorySlotData slot in _inventorySystem.Slots)
+            foreach (InventorySlotData slot in _inventorySystem.Slots) //TODO Должен ли слот знать о своей цене? Нет, скорее 
             {
-                InventorySlotView slotView = CreateSlotView(slot);
+                InventorySlotView slotView = _inventorySlotViewFactory.Create();
+
+                slotView.Init(slot.Id);
+                slotView.Clicked += OnSlotClicked; //Не забыть отписаться при изменении
+                
+                RenderSlot(slot, slotView);
+
                 _inventoryGridView.Add(slotView);
-                slotView.Show(slot.IsUnlocked);
+            }
+        }
+
+        private void OnSlotClicked(int id) //TODO Не забыть, что следующий слот открывается только после открытия предыдущего!!!
+        {
+            InventorySlotData slot = _inventorySystem.GetSlotById(id);
+
+            if (!slot.IsUnlocked)
+            {
+                HandleLockedSlotClick(id);
+                return;
+            }
+
+            HandleOpenedSlotClick(id);
+        }
+
+        private void HandleOpenedSlotClick(int id)
+        {
+            
+            
+            Refresh();
+        }
+
+        private void HandleLockedSlotClick(int id)
+        {
+            _inventorySystem.TryUnlockSlot(id);
+            
+            Refresh();
+        }
+
+        private void RenderSlot(InventorySlotData slot, InventorySlotView slotView)
+        {
+            if (!slot.IsUnlocked)
+            {
+                slotView.RenderLocked(10); //TODO Разобраться тут
+            }
+            else if (slot.ItemStack == null)
+            {
+                slotView.RenderEmptyOpened();
+            }
+            else
+            {
+                slotView.RenderOpened(
+                    _staticDataService.GetSpriteByType(slot.ItemStack.Type),
+                    slot.ItemStack.Count);
             }
         }
 
@@ -176,17 +238,6 @@ namespace UI.InventoryScreen.Presenters
         {
             _inventoryInfoView.DrawMoney(_wallet.Coins);
             _inventoryInfoView.DrawWeight(_inventorySystem.GetTotalWeight());
-        }
-
-        private InventorySlotView CreateSlotView(InventorySlotData slot)
-        {
-            if (slot.ItemStack == null)
-                return _inventorySlotViewFactory.Create(slot.IsUnlocked);
-
-            return _inventorySlotViewFactory.Create(
-                slot.IsUnlocked,
-                slot.ItemStack.Type,
-                slot.ItemStack.Count);
         }
 
         public void Dispose()

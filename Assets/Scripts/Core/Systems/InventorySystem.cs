@@ -5,9 +5,11 @@ using Core.Configs.Weapons;
 using Core.Inventory;
 using Core.Results;
 using Core.Results.DefaultNamespace.Results;
+using Core.Wallets;
 using Infrastructure.StaticData;
 using Services;
 using Services.RandomServices;
+using UnityEngine;
 
 namespace Core.Systems
 {
@@ -17,15 +19,17 @@ namespace Core.Systems
         private readonly IStaticDataService _staticDataService;
         private readonly IRandomService _randomService;
         private readonly InventorySlotSelector _inventorySlotSelector;
+        private readonly IWallet _wallet;
 
         public InventorySystem(
             InventoryData inventoryData,
             IStaticDataService staticDataService,
-            IRandomService randomService)
+            IRandomService randomService, IWallet wallet)
         {
             _inventoryData = inventoryData;
             _staticDataService = staticDataService;
             _randomService = randomService;
+            _wallet = wallet;
             _inventorySlotSelector = new InventorySlotSelector(_inventoryData, _staticDataService);
         }
 
@@ -169,6 +173,43 @@ namespace Core.Systems
             }
 
             ammoSlot.ItemStack.Decrease(1);
+        }
+
+        public InventorySlotData GetSlotById(int slotId)
+        {
+            foreach (var slot in _inventoryData.Slots)
+            {
+                if (slot.Id == slotId)
+                    return slot;
+            }
+
+            throw new KeyNotFoundException();
+        }
+
+        public void TryUnlockSlot(int slotId)
+        {
+            InventorySlotData slot = GetSlotById(slotId);
+
+            if (slot == null)
+                return;
+
+            if (slot.IsUnlocked)
+                return;
+
+            int price = GetUnlockPrice(slot);
+
+            if (!_wallet.TrySpend(price))
+            {
+                Debug.Log("12321");
+                return;
+            }
+
+            slot.Unlock();
+        }
+
+        private int GetUnlockPrice(InventorySlotData slot) //TODO Заглушка
+        {
+            return 100; // заглушка
         }
     }
 }

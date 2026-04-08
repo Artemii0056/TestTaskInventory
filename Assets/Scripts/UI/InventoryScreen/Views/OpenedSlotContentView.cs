@@ -14,19 +14,22 @@ namespace UI.InventoryScreen.Views
 
         private int _count;
 
-        public void Init(Sprite icon, int count) 
+        public void Render(Sprite icon, int count)
         {
-            if (icon != null) 
-                _icon.sprite = icon;
-            
-            _count = count;
+            _icon.sprite = icon;
+            _icon.enabled = icon != null;
+
+            _slotInfo.gameObject.SetActive(count > 1);
+            _countText.text = count.ToString();
         }
         
-        public void Show()
+        public void RenderEmpty()
         {
-            _slotInfo.gameObject.SetActive(_count > 1);
+            _icon.sprite = null;
+            _icon.enabled = false;
 
-            _countText.text = _count.ToString();
+            _slotInfo.gameObject.SetActive(false);
+            _countText.text = string.Empty;
         }
     }
 }

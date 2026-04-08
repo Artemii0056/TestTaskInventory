@@ -14,6 +14,8 @@ namespace UI.InventoryScreen.Views
         {
             _slots = new List<InventorySlotView>();
         }
+        
+        public IReadOnlyList<InventorySlotView> Slots => _slots;
 
         public void Add(InventorySlotView view)
         {
