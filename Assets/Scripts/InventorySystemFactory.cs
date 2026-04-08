@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using Core;
 using Core.Architecture;
+using Infrastructure.StaticData;
 
 namespace DefaultNamespace
 {
     public class InventorySystemFactory : IInventoryFactory
     {
         private readonly IUniqueIdService _uniqueIdService;
+        private readonly IStaticDataService _staticDataService;
         
         public InventorySystemFactory(IUniqueIdService uniqueIdService) => 
             _uniqueIdService = uniqueIdService;
@@ -23,7 +25,7 @@ namespace DefaultNamespace
             
             InventoryData data = new InventoryData(slots);
             
-            return new InventorySystem(data);
+            return new InventorySystem(data, _staticDataService);
         }
 
         private void FillPart(int remainingCount, List<InventorySlotData> slots, bool status)

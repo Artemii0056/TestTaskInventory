@@ -16,7 +16,7 @@ namespace Core.Architecture
 
         public void Show(bool isUnlocked)
         {
-            if (isUnlocked)
+            if (isUnlocked==false)
             {
                 LockedSlotContentView.gameObject.SetActive(true);
             }

@@ -53,6 +53,19 @@ namespace Infrastructure.StaticData
             throw new Exception("Не нашел");
         }
 
+        public AmmoConfig GetAmmoConfigByType(InventoryItemType itemType)
+        {
+            foreach (var config in _ammoConfigs)
+            {
+                if (config.InventoryItemData.Type == itemType)
+                {
+                    return config;
+                }
+            }
+
+            throw new Exception("123");
+        }
+
         public List<AmmoConfig> GetAmmoConfigs() =>  
             _ammoConfigs.ToList();
 
