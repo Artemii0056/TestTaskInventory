@@ -27,7 +27,7 @@ namespace DefaultNamespace
 
                 if (!HasItems(slot))
                     continue;
-                
+
                 if (slot.ItemStack.Type != itemType)
                     continue;
 
@@ -98,7 +98,7 @@ namespace DefaultNamespace
         {
             foreach (InventorySlotData slot in _inventoryData.Slots)
             {
-                if (IsBusyUnlockedSlot(slot))
+                if (!IsEmptyUnlockedSlot(slot))
                     continue;
 
                 result = slot;
@@ -111,8 +111,11 @@ namespace DefaultNamespace
 
         private bool IsBusyUnlockedSlot(InventorySlotData slot) =>
             slot.IsUnlocked && slot.ItemStack != null;
-        
+
         private bool HasItems(InventorySlotData slot) =>
             slot.ItemStack != null && slot.ItemStack.Count > 0;
+
+        private bool IsEmptyUnlockedSlot(InventorySlotData slot) =>
+            slot.IsUnlocked && slot.ItemStack == null;
     }
 }
