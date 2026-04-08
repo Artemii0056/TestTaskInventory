@@ -37,8 +37,6 @@ public class InventorySlotViewFactory
 
     private InventorySlotView FillOpenned(InventorySlotView inventorySlotView, InventoryItemType type, int count)
     {
-        //Debug.Log(type + " : " + count);
-
         Sprite icon;
 
         if (type == InventoryItemType.None)
@@ -50,7 +48,6 @@ public class InventorySlotViewFactory
             icon = _staticDataService.GetSpriteByType(type);
         }
 
-       // Debug.Log($"InFactory {type} : {count} : {icon == null}");
         inventorySlotView.OpenedSlotContentView.Init(icon, count);
 
         return inventorySlotView;

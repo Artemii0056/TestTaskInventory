@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Core;
+using Infrastructure.StaticData;
 
 namespace Inventories.Configs.Ammo.AmmoFactories
 {
@@ -12,10 +12,10 @@ namespace Inventories.Configs.Ammo.AmmoFactories
         private readonly IRandomService _randomService;
         private readonly List<AmmoConfig> _ammoConfigs;
 
-        public AmmoFactory(IRandomService randomService, ItemCatalog itemCatalog)
+        public AmmoFactory(IRandomService randomService, IStaticDataService staticDataService)
         {
             _randomService = randomService;
-            _ammoConfigs = itemCatalog.AmmoConfigs.ToList();
+            _ammoConfigs = staticDataService.GetAmmoConfigs();
         }
         
         public ItemStack CreateRandom()

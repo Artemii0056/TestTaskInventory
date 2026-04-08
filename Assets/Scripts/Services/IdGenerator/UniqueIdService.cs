@@ -1,9 +1,4 @@
-﻿public interface IUniqueIdService
-{
-    public int GetNextId();
-}
-    
-public class UniqueIdService : IUniqueIdService
+﻿public class UniqueIdService : IUniqueIdService
 {
     private int _current;
 
