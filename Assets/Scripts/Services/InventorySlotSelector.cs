@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using Core;
+using Core.Configs;
+using Core.Inventory;
 using Infrastructure.StaticData;
-using Inventories;
 
 namespace Services
 {

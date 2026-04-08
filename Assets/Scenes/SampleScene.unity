@@ -1450,10 +1450,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1214636658}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9aabd4a078d84f48a2899092be3af111, type: 3}
+  m_Script: {fileID: 11500000, guid: 2f2d473a417b41469aa6dde727344441, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Text>k__BackingField: {fileID: 219105547}
+  <Text>k__BackingField: {fileID: 0}
   <InventoryActionType>k__BackingField: 2
 --- !u!1 &1245838815
 GameObject:
@@ -1720,10 +1720,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1264285580}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 909db2320c6843128b027846b8814264, type: 3}
+  m_Script: {fileID: 11500000, guid: 2f2d473a417b41469aa6dde727344441, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Text>k__BackingField: {fileID: 1268501561}
+  <Text>k__BackingField: {fileID: 0}
   <InventoryActionType>k__BackingField: 1
 --- !u!1 &1268501559
 GameObject:
@@ -2290,10 +2290,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1446926361}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0046eca12676463c8a5c0eb23e093a2d, type: 3}
+  m_Script: {fileID: 11500000, guid: 2f2d473a417b41469aa6dde727344441, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Text>k__BackingField: {fileID: 1209375159}
+  <Text>k__BackingField: {fileID: 0}
   <InventoryActionType>k__BackingField: 4
 --- !u!1 &1539326574
 GameObject:
@@ -2494,10 +2494,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1543125858}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22254d36cbda4e07882567f4d19ed489, type: 3}
+  m_Script: {fileID: 11500000, guid: 2f2d473a417b41469aa6dde727344441, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Text>k__BackingField: {fileID: 1013655793}
+  <Text>k__BackingField: {fileID: 0}
   <InventoryActionType>k__BackingField: 0
 --- !u!1 &1589336546
 GameObject:
@@ -2666,10 +2666,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1591887623}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69b74867c07bf4345b92c900ade90944, type: 3}
+  m_Script: {fileID: 11500000, guid: 2f2d473a417b41469aa6dde727344441, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Text>k__BackingField: {fileID: 1310047840}
+  <Text>k__BackingField: {fileID: 0}
   <InventoryActionType>k__BackingField: 3
 --- !u!1 &1621993552
 GameObject:

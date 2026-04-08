@@ -1,4 +1,4 @@
-﻿using Core.Architecture;
+﻿using Core.Systems;
 
 namespace Services.InventoryFactory
 {

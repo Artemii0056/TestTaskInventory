@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.Inventory;
 
 namespace Services.ItemsFactory
 {

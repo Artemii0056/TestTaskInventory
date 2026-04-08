@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core;
+using Core.Configs;
+using Core.Configs.Ammo;
+using Core.Configs.Armors;
+using Core.Configs.Weapons;
 using Infrastructure.ResourceLoad;
-using Inventories;
-using Inventories.Configs;
-using Inventories.Configs.Ammo;
-using Inventories.Configs.Armors;
-using Inventories.Configs.Weapons;
 using UnityEngine;
 
 namespace Infrastructure.StaticData

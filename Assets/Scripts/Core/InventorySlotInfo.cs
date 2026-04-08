@@ -1,7 +1,7 @@
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
-namespace Core.Architecture
+namespace Core
 {
     public class InventorySlotInfo : MonoBehaviour 
     {

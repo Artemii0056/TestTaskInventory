@@ -1,4 +1,4 @@
-﻿namespace Core.Architecture
+﻿namespace Core
 {
     public enum InventoryActionType
     {

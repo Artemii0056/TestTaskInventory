@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Core;
-using Core.Architecture;
+using Core.Inventory;
+using Core.Systems;
 using Infrastructure.StaticData;
 using Services.IdGenerator;
 using Services.RandomServices;

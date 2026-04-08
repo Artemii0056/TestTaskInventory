@@ -1,6 +1,4 @@
-﻿using Inventories;
-
-namespace Core
+﻿namespace Core
 {
     public class SlotChange
     {

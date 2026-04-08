@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Inventories;
-using Inventories.Configs;
-using Inventories.Configs.Ammo;
-using Inventories.Configs.Armors;
-using Inventories.Configs.Weapons;
+using Core;
+using Core.Configs;
+using Core.Configs.Ammo;
+using Core.Configs.Armors;
+using Core.Configs.Weapons;
 using UnityEngine;
 
 namespace Infrastructure.StaticData
