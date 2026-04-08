@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Inventories.Configs.Weapons
 {
     [CreateAssetMenu(fileName = nameof(WeaponConfig), menuName = "StaticData/Weapons/" + nameof(WeaponConfig))]
-    public class WeaponConfig : ScriptableObject
+    public class WeaponConfig : ScriptableObject, IItemConfig
     {
         [field: Header("Inventory info")]
         [field: SerializeField] public InventoryItemData InventoryItemData { get; private set; }

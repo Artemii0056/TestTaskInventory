@@ -1,22 +1,22 @@
 ﻿using System;
-using DefaultNamespace;
-using DefaultNamespace.Results;
 using Inventories.Configs.Ammo.AmmoFactories;
-using Inventories.View;
+using Results;
 
 namespace Core.Architecture
 {
     public class InventoryScreenPresenter
     {
-        private InventoryActionsView _inventoryActionsView;
-        private InventoryGridView _inventoryGridView;
+        private readonly InventoryActionsView _inventoryActionsView;
+        private readonly InventoryGridView _inventoryGridView;
         private InventoryInfoView _inventoryInfoView;
 
-        private InventorySystem _inventorySystem;
-        private IWallet _wallet;
-        private IAmmoFactory _ammoFactory;
-        private IDebugMessageService _debugMessageService;
-        private InventorySlotViewFactory _inventorySlotViewFactory;
+        private readonly InventorySystem _inventorySystem;
+        private readonly IWallet _wallet;
+        private readonly IAmmoFactory _ammoFactory;
+        private readonly IDebugMessageService _debugMessageService;
+        private readonly InventorySlotViewFactory _inventorySlotViewFactory;
+        private readonly IItemFactory _itemFactory;
+        private readonly IRandomService _randomService;
 
         public InventoryScreenPresenter(
             InventoryActionsView inventoryActionsView,
@@ -25,7 +25,8 @@ namespace Core.Architecture
             InventorySystem inventorySystem,
             IWallet wallet,
             IAmmoFactory ammoFactory,
-            IDebugMessageService debugMessageService, InventorySlotViewFactory inventorySlotViewFactory)
+            IDebugMessageService debugMessageService, InventorySlotViewFactory inventorySlotViewFactory,
+            IItemFactory itemFactory, IRandomService randomService)
         {
             _inventoryActionsView = inventoryActionsView;
             _inventoryGridView = inventoryGridView;
@@ -35,6 +36,8 @@ namespace Core.Architecture
             _ammoFactory = ammoFactory;
             _debugMessageService = debugMessageService;
             _inventorySlotViewFactory = inventorySlotViewFactory;
+            _itemFactory = itemFactory;
+            _randomService = randomService;
 
             _inventoryActionsView.ActionClicked += OnActionClicked;
         }
@@ -48,15 +51,15 @@ namespace Core.Architecture
                     break;
 
                 case InventoryActionType.AddItem:
-                    //AddItem();
+                    AddItem();
                     break;
 
                 case InventoryActionType.DeleteItem:
-                    //DeleteSelectedItem();
+                    DeleteSelectedItem();
                     break;
 
                 case InventoryActionType.Shoot:
-                    // ShootSelectedWeapon();
+                    ShootSelectedWeapon();
                     break;
 
                 case InventoryActionType.AddMoney:
@@ -66,17 +69,55 @@ namespace Core.Architecture
                 default:
                     throw new ArgumentOutOfRangeException(nameof(actionType), actionType, null);
             }
+
+            Refresh();
+        }
+
+        private void ShootSelectedWeapon()
+        {
+            _inventorySystem.TryShootRandomWeapon();
+            //Получить все слоты с оружием
+            //рандомно шмальнуть
+        }
+
+        private void DeleteSelectedItem()
+        {
+            if (_inventorySystem.TryDeleteItem(out DeleteItemResult result))
+            {
+                _debugMessageService.ShowMessage($"Удалено ({result.Count}) [{result.ItemType}] из слота: [{result.SlotId}]");
+                return;
+            }
+            
+            _debugMessageService.ShowMessage($"Инвентарь пуст"); 
         }
 
         private void IncreaseMoney()
         {
-            _wallet.Increase(10);
+            int value = _randomService.GenerateValue(10, 99);
+
+            _wallet.Increase(value);
+
+            _debugMessageService.ShowMessage($"Выводит в консоль сообщение Добавлено ({value}) монет");
+        }
+
+        private void AddItem()
+        {
+            ItemStack stack = _itemFactory.CreateRandom();
+
+            if (_inventorySystem.TryAddItem(stack, out InventorySlotData data) == false)
+            {
+                _debugMessageService.ShowMessage("Инвентарь полон");
+                return;
+            }
+
+            _debugMessageService.ShowMessage(
+                $"Добавлено ({data.ItemStack.Type}) в слот: {data.Id}");
         }
 
         private void AddAmmoAction()
         {
             ItemStack ammoStack = _ammoFactory.CreateRandom();
-            
+
             AddAmmoResult result = _inventorySystem.AddAmmo(ammoStack.Type, ammoStack.Count);
 
             foreach (SlotChange change in result.Changes)
@@ -85,20 +126,18 @@ namespace Core.Architecture
                     $"Добавлено ({change.Delta}) {change.ItemType} в слот: {change.SlotId}");
             }
 
-            if (result.RemainingAmount > 0) 
+            if (result.RemainingAmount > 0)
                 _debugMessageService.ShowMessage("Инвентарь полон");
-
-            Refresh();
         }
 
         public void Refresh()
         {
             _inventoryGridView.DeleteAll();
 
-            InventorySlotView slotView;
-
             foreach (var slot in _inventorySystem.Slots)
             {
+                InventorySlotView slotView;
+
                 if (slot.ItemStack == null)
                 {
                     slotView = _inventorySlotViewFactory.Create(slot.IsUnlocked);
@@ -106,10 +145,11 @@ namespace Core.Architecture
                 }
                 else
                 {
-                    slotView = _inventorySlotViewFactory.Create(slot.IsUnlocked, slot.ItemStack.Type, slot.ItemStack.Count);
+                    slotView = _inventorySlotViewFactory.Create(slot.IsUnlocked, slot.ItemStack.Type,
+                        slot.ItemStack.Count);
                     _inventoryGridView.Add(slotView);
                 }
-                
+
                 slotView.Show(slot.IsUnlocked);
             }
         }

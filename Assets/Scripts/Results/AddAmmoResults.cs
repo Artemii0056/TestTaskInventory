@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Core;
 
-namespace DefaultNamespace.Results
+namespace Results
 {
     public class AddAmmoResult
     {

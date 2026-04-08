@@ -1,9 +1,6 @@
 ﻿using Core.Architecture;
 
-namespace DefaultNamespace
+public interface IInventoryFactory
 {
-    public interface IInventoryFactory
-    {
-        InventorySystem Create(int allCount, int openedCount);
-    }
+    InventorySystem Create(int allCount, int openedCount);
 }

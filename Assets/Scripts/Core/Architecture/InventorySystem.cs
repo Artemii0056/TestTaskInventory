@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using DefaultNamespace.Results;
+using System.Linq;
 using Infrastructure.StaticData;
 using Inventories;
-using UnityEngine;
+using Inventories.Configs.Ammo.AmmoFactories;
+using Results;
 
 namespace Core.Architecture
 {
@@ -11,13 +12,15 @@ namespace Core.Architecture
     {
         private readonly InventoryData _inventoryData;
         private readonly IStaticDataService _staticDataService;
+        private readonly IRandomService _randomService;
 
         public InventorySystem(
             InventoryData inventoryData,
-            IStaticDataService staticDataService)
+            IStaticDataService staticDataService, IRandomService randomService)
         {
             _inventoryData = inventoryData;
             _staticDataService = staticDataService;
+            _randomService = randomService;
         }
 
         public IReadOnlyList<InventorySlotData> Slots => _inventoryData.Slots;
@@ -26,8 +29,6 @@ namespace Core.Architecture
         {
             if (amount <= 0)
                 throw new ArgumentOutOfRangeException(nameof(amount));
-            
-            Debug.Log(_staticDataService == null);
 
             int maxStack = _staticDataService
                 .GetAmmoConfigByType(ammoType)
@@ -52,9 +53,7 @@ namespace Core.Architecture
                     continue;
                 }
 
-                InventorySlotData emptyUnlockedSlot = FindFirstEmptyUnlockedSlot();
-
-                if (emptyUnlockedSlot == null)
+                if (TryFindFirstEmptyUnlockedSlot(out InventorySlotData emptyUnlockedSlot) == false)
                     break;
 
                 int toAddToNewStack = Math.Min(maxStack, remainingToAdd);
@@ -68,8 +67,10 @@ namespace Core.Architecture
             return new AddAmmoResult(requestedAmount, addedAmount, remainingToAdd, changes);
         }
 
-        private InventorySlotData FindFirstEmptyUnlockedSlot()
+        private bool TryFindFirstEmptyUnlockedSlot(out InventorySlotData data)
         {
+            data = null;
+
             foreach (InventorySlotData slot in _inventoryData.Slots)
             {
                 if (!slot.IsUnlocked)
@@ -78,10 +79,11 @@ namespace Core.Architecture
                 if (slot.ItemStack != null)
                     continue;
 
-                return slot;
+                data = slot;
+                return true;
             }
 
-            return null;
+            return false;
         }
 
         private bool TryFindFirstNotFullStack(InventoryItemType type, int maxStack, out InventorySlotData slotToFind)
@@ -90,7 +92,7 @@ namespace Core.Architecture
 
             foreach (InventorySlotData slot in _inventoryData.Slots)
             {
-                if (!slot.IsUnlocked)
+                if (slot.IsUnlocked == false)
                     continue;
 
                 if (slot.ItemStack == null)
@@ -109,9 +111,79 @@ namespace Core.Architecture
             return false;
         }
 
-        public bool TryRemoveItem(ItemStack itemStack)
+        private bool TryFindBusySlots(out List<InventorySlotData> slots)
         {
-            throw new Exception();
+            slots = new List<InventorySlotData>();
+
+            foreach (InventorySlotData slot in _inventoryData.Slots)
+            {
+                if (slot.HasItem)
+                    slots.Add(slot);
+            }
+
+            return slots.Any();
+        }
+
+        private bool TryFindWeapons(out List<InventorySlotData> slots)
+        {
+            List<InventoryItemType> itemTypes = new List<InventoryItemType>();
+
+            foreach (var config in _staticDataService.GetWeaponConfigs())
+            {
+                itemTypes.Add(config.InventoryItemData.Type);
+            }
+
+            slots = new List<InventorySlotData>();
+
+            foreach (InventorySlotData slot in _inventoryData.Slots) //В идеале, тут мы должны собрать именно только пушки
+            {
+                if (slot.ItemStack == null)
+                    continue;
+
+                foreach (var type in itemTypes)
+                {
+                    if (slot.ItemStack.Type == type)
+                    {
+                        slots.Add(slot);
+                        break;
+                    }
+                }
+            }
+
+            return slots.Any();
+        }
+
+        public bool TryDeleteItem(out DeleteItemResult result)
+            //TODO Хочу добавить ячейке состояние - Занята/Свободно/Заблокирована
+        {
+            result = null;
+
+            if (TryFindBusySlots(out List<InventorySlotData> slotDatas) == false)
+                return false;
+
+            var slot = slotDatas[_randomService.GenerateValue(slotDatas.Count)];
+
+            result = new DeleteItemResult(slot.ItemStack.Count, slot.ItemStack.Type, slot.Id);
+            slot.Clear();
+
+            return true;
+        }
+
+        public bool TryAddItem(ItemStack itemStack, out InventorySlotData slotChanged)
+        {
+            slotChanged = null;
+
+            if (TryFindFirstEmptyUnlockedSlot(out InventorySlotData slot) == false)
+                return false;
+
+            slot.SetItem(new ItemStack(itemStack.Type, itemStack.Count));
+            slotChanged = slot;
+            return true;
+        }
+
+        public void TryShootRandomWeapon()
+        {
+            throw new NotImplementedException();
         }
     }
 }

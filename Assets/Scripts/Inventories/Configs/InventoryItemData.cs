@@ -15,5 +15,7 @@ namespace Inventories.Configs
         [field: SerializeField] public float Weight { get; private set; }
         
         [field: SerializeField] public int MaxStack { get; private set; }
+        
+        [field: SerializeField] public ItemKind Kind { get; private set; }
     }
 }

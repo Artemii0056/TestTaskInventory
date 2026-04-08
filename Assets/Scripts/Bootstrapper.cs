@@ -1,10 +1,8 @@
 ﻿using Core;
 using Core.Architecture;
-using DefaultNamespace;
 using Infrastructure.ResourceLoad;
 using Infrastructure.StaticData;
 using Inventories.Configs.Ammo.AmmoFactories;
-using Inventories.View;
 using UnityEngine;
 
 public class Bootstrapper : MonoBehaviour
@@ -27,16 +25,17 @@ public class Bootstrapper : MonoBehaviour
 
     public void Init()
     {
+        ResourceLoader resourceLoader = new ResourceLoader();
+        IStaticDataService staticDataService = new StaticDataService(resourceLoader);
+        IRandomService randomService = new RandomService();
+        IItemFactory itemFactory = new ItemFactory(staticDataService, randomService);
         
         IUniqueIdService uniqueIdService = new UniqueIdService();
         
-        ResourceLoader resourceLoader = new ResourceLoader();
-        IStaticDataService staticDataService = new StaticDataService(resourceLoader);
-        IInventoryFactory factory = new InventorySystemFactory(uniqueIdService, staticDataService);
+        IInventoryFactory factory = new InventorySystemFactory(uniqueIdService, staticDataService, randomService);
         InventorySlotViewFactory inventorySlotViewFactory = new InventorySlotViewFactory(_inventorySlotViewPrefab, staticDataService);
             
         ItemCatalog itemCatalog = new ItemCatalog(staticDataService);
-        IRandomService randomService = new RandomService();
         IAmmoFactory ammoFactory = new AmmoFactory(randomService,itemCatalog );
             
         InventorySystem inventorySystem = factory.Create(50, _openedCount);
@@ -44,7 +43,7 @@ public class Bootstrapper : MonoBehaviour
         
         Wallet wallet = new Wallet(0);
 
-        InventoryScreenPresenter presenter = new InventoryScreenPresenter(_inventoryActionsView, _inventoryGridView, _inventoryInfoView, inventorySystem, wallet, ammoFactory, debugMessageService, inventorySlotViewFactory);
+        InventoryScreenPresenter presenter = new InventoryScreenPresenter(_inventoryActionsView, _inventoryGridView, _inventoryInfoView, inventorySystem, wallet, ammoFactory, debugMessageService, inventorySlotViewFactory, itemFactory, randomService);
         _inventoryScreenPresenter = presenter;
         
         presenter.Refresh();
