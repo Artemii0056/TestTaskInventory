@@ -29,10 +29,10 @@ public class Bootstrapper : MonoBehaviour
     {
         
         IUniqueIdService uniqueIdService = new UniqueIdService();
-        IInventoryFactory factory = new InventorySystemFactory(uniqueIdService);
         
         ResourceLoader resourceLoader = new ResourceLoader();
         IStaticDataService staticDataService = new StaticDataService(resourceLoader);
+        IInventoryFactory factory = new InventorySystemFactory(uniqueIdService, staticDataService);
         InventorySlotViewFactory inventorySlotViewFactory = new InventorySlotViewFactory(_inventorySlotViewPrefab, staticDataService);
             
         ItemCatalog itemCatalog = new ItemCatalog(staticDataService);

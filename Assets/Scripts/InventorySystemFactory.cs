@@ -10,18 +10,21 @@ namespace DefaultNamespace
         private readonly IUniqueIdService _uniqueIdService;
         private readonly IStaticDataService _staticDataService;
         
-        public InventorySystemFactory(IUniqueIdService uniqueIdService) => 
+        public InventorySystemFactory(IUniqueIdService uniqueIdService, IStaticDataService staticDataService)
+        {
             _uniqueIdService = uniqueIdService;
+            _staticDataService = staticDataService;
+        }
 
         public InventorySystem Create(int allCount, int openedCount)
         {
             List<InventorySlotData> slots = new List<InventorySlotData>();
             
-            FillPart(openedCount, slots, false);
+            FillPart(openedCount, slots, true);
             
             int remainingCount = allCount - openedCount;
             
-            FillPart(remainingCount, slots, true);
+            FillPart(remainingCount, slots, false);
             
             InventoryData data = new InventoryData(slots);
             

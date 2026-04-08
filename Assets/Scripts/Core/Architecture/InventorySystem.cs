@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DefaultNamespace.Results;
 using Infrastructure.StaticData;
 using Inventories;
+using UnityEngine;
 
 namespace Core.Architecture
 {
@@ -25,11 +26,13 @@ namespace Core.Architecture
         {
             if (amount <= 0)
                 throw new ArgumentOutOfRangeException(nameof(amount));
+            
+            Debug.Log(_staticDataService == null);
 
             int maxStack = _staticDataService
                 .GetAmmoConfigByType(ammoType)
                 .InventoryItemData.MaxStack;
-            
+
             int requestedAmount = amount;
 
             int remainingToAdd = amount;
@@ -45,7 +48,7 @@ namespace Core.Architecture
 
                     remainingToAdd -= toAdd;
                     slotWithAmmo.ItemStack.Increase(toAdd);
-                    changes.Add(new SlotChange(slotWithAmmo.Id,ammoType, startCount, slotWithAmmo.ItemStack.Count ));
+                    changes.Add(new SlotChange(slotWithAmmo.Id, ammoType, startCount, slotWithAmmo.ItemStack.Count));
                     continue;
                 }
 
@@ -57,9 +60,9 @@ namespace Core.Architecture
                 int toAddToNewStack = Math.Min(maxStack, remainingToAdd);
                 remainingToAdd -= toAddToNewStack;
                 emptyUnlockedSlot.SetItem(new ItemStack(ammoType, toAddToNewStack));
-                changes.Add(new SlotChange(emptyUnlockedSlot.Id,ammoType, 0, slotWithAmmo.ItemStack.Count ));
+                changes.Add(new SlotChange(emptyUnlockedSlot.Id, ammoType, 0, emptyUnlockedSlot.ItemStack.Count));
             }
-            
+
             int addedAmount = requestedAmount - remainingToAdd;
 
             return new AddAmmoResult(requestedAmount, addedAmount, remainingToAdd, changes);
@@ -100,28 +103,6 @@ namespace Core.Architecture
                     continue;
 
                 slotToFind = slot;
-                return true;
-            }
-
-            return false;
-        }
-
-        public bool TryAddItem(ItemStack itemStack, out int slotId)
-        {
-            slotId = -1;
-
-            for (int i = 0; i < _inventoryData.Slots.Count; i++)
-            {
-                InventorySlotData slot = _inventoryData.Slots[i];
-
-                if (!slot.IsUnlocked)
-                    continue;
-
-                if (slot.ItemStack != null)
-                    continue;
-
-                slot.SetItem(itemStack);
-                slotId = i;
                 return true;
             }
 
