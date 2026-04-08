@@ -22,21 +22,23 @@ namespace DefaultNamespace
         {
             InventorySlotView inventorySlotView = Object.Instantiate(_prefab);
 
-            if (isUnlocked == false)
+            if (isUnlocked)
             {
-                return Create(inventorySlotView, type, count);
+                return FillOpenned(inventorySlotView, type, count);
             }
-
-            return Create(inventorySlotView, price);
+            else
+            {
+                return FillLocked(inventorySlotView, price);
+            }
         }
 
-        private InventorySlotView Create(InventorySlotView inventorySlotView, int price)
+        private InventorySlotView FillLocked(InventorySlotView inventorySlotView, int price)
         {
             inventorySlotView.LockedSlotContentView.Render(price);
             return inventorySlotView;
         }
 
-        private InventorySlotView Create(InventorySlotView inventorySlotView, InventoryItemType type, int count)
+        private InventorySlotView FillOpenned(InventorySlotView inventorySlotView, InventoryItemType type, int count)
         {
             //Debug.Log(type + " : " + count);
 

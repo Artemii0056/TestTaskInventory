@@ -1,5 +1,6 @@
 ﻿using System;
 using DefaultNamespace;
+using DefaultNamespace.Results;
 using Inventories.Configs.Ammo.AmmoFactories;
 using Inventories.View;
 
@@ -75,13 +76,16 @@ namespace Core.Architecture
         private void AddAmmoAction()
         {
             ItemStack ammoStack = _ammoFactory.CreateRandom();
+            
+            AddAmmoResult result = _inventorySystem.AddAmmo(ammoStack.Type, ammoStack.Count);
 
-            bool result = _inventorySystem.TryAddItem(ammoStack, out int slotId);
-
-            if (result)
+            foreach (SlotChange change in result.Changes)
+            {
                 _debugMessageService.ShowMessage(
-                    $"Добавлено ({ammoStack.Count}) {ammoStack.Type} в слот: {slotId}");
-            else
+                    $"Добавлено ({change.Delta}) {change.ItemType} в слот: {change.SlotId}");
+            }
+
+            if (result.RemainingAmount > 0) 
                 _debugMessageService.ShowMessage("Инвентарь полон");
 
             Refresh();

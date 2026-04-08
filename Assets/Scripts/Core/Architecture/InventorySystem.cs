@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using DefaultNamespace.Results;
 using Infrastructure.StaticData;
-using UnityEngine.UI;
+using Inventories;
 
 namespace Core.Architecture
 {
@@ -21,10 +21,87 @@ namespace Core.Architecture
 
         public IReadOnlyList<InventorySlotData> Slots => _inventoryData.Slots;
 
-        public bool TryAddAmmo(ItemStack stack) //получить тут размер из сервиса 
+        public AddAmmoResult AddAmmo(InventoryItemType ammoType, int amount)
         {
-            var type = _staticDataService.GetAmmoConfigByType(stack.Type);
+            if (amount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(amount));
 
+            int maxStack = _staticDataService
+                .GetAmmoConfigByType(ammoType)
+                .InventoryItemData.MaxStack;
+            
+            int requestedAmount = amount;
+
+            int remainingToAdd = amount;
+            List<SlotChange> changes = new List<SlotChange>();
+
+            while (remainingToAdd > 0)
+            {
+                if (TryFindFirstNotFullStack(ammoType, maxStack, out InventorySlotData slotWithAmmo))
+                {
+                    int startCount = slotWithAmmo.ItemStack.Count;
+                    int freeSpace = maxStack - startCount;
+                    int toAdd = Math.Min(freeSpace, remainingToAdd);
+
+                    remainingToAdd -= toAdd;
+                    slotWithAmmo.ItemStack.Increase(toAdd);
+                    changes.Add(new SlotChange(slotWithAmmo.Id,ammoType, startCount, slotWithAmmo.ItemStack.Count ));
+                    continue;
+                }
+
+                InventorySlotData emptyUnlockedSlot = FindFirstEmptyUnlockedSlot();
+
+                if (emptyUnlockedSlot == null)
+                    break;
+
+                int toAddToNewStack = Math.Min(maxStack, remainingToAdd);
+                remainingToAdd -= toAddToNewStack;
+                emptyUnlockedSlot.SetItem(new ItemStack(ammoType, toAddToNewStack));
+                changes.Add(new SlotChange(emptyUnlockedSlot.Id,ammoType, 0, slotWithAmmo.ItemStack.Count ));
+            }
+            
+            int addedAmount = requestedAmount - remainingToAdd;
+
+            return new AddAmmoResult(requestedAmount, addedAmount, remainingToAdd, changes);
+        }
+
+        private InventorySlotData FindFirstEmptyUnlockedSlot()
+        {
+            foreach (InventorySlotData slot in _inventoryData.Slots)
+            {
+                if (!slot.IsUnlocked)
+                    continue;
+
+                if (slot.ItemStack != null)
+                    continue;
+
+                return slot;
+            }
+
+            return null;
+        }
+
+        private bool TryFindFirstNotFullStack(InventoryItemType type, int maxStack, out InventorySlotData slotToFind)
+        {
+            slotToFind = null;
+
+            foreach (InventorySlotData slot in _inventoryData.Slots)
+            {
+                if (!slot.IsUnlocked)
+                    continue;
+
+                if (slot.ItemStack == null)
+                    continue;
+
+                if (slot.ItemStack.Type != type)
+                    continue;
+
+                if (slot.ItemStack.Count >= maxStack)
+                    continue;
+
+                slotToFind = slot;
+                return true;
+            }
 
             return false;
         }
@@ -33,14 +110,11 @@ namespace Core.Architecture
         {
             slotId = -1;
 
-            List<InventorySlotData> slots = _inventoryData.Slots.ToList();
-            int count = slots.Count;
-
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < _inventoryData.Slots.Count; i++)
             {
-                InventorySlotData slot = slots[i];
+                InventorySlotData slot = _inventoryData.Slots[i];
 
-                if (slot.IsUnlocked == false)
+                if (!slot.IsUnlocked)
                     continue;
 
                 if (slot.ItemStack != null)
