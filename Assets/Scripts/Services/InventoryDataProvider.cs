@@ -20,7 +20,12 @@ namespace Services
         public InventoryData CreateOrLoad()
         {
             if (_gameSaveService.HasSave())
-                return _gameSaveService.LoadInventory();
+            {
+                InventoryData inventoryData = _gameSaveService.LoadInventory();
+
+                if (inventoryData != null)
+                    return inventoryData;
+            }
 
             return _inventoryDataFactory.Create();
         }

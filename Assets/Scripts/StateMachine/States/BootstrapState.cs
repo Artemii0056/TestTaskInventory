@@ -1,9 +1,8 @@
 ﻿using Infrastructure.StaticData;
-using Unity.VisualScripting;
 
 namespace StateMachine.States
 {
-    public class BootstrapState : State
+    public class BootstrapState : IState
     {
         private readonly IGameStateMachine _gameStateMachine;
         private readonly IStaticDataService _staticDataService;
@@ -16,8 +15,7 @@ namespace StateMachine.States
 
         public void Enter()
         {
-            _staticDataService.LoadAll();
-            //_gameStateMachine.Enter<LoadProgress>();
+            _gameStateMachine.Enter<LoadProgressState>();
         }
 
         public void Exit()

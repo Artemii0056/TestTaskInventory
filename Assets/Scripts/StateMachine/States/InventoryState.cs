@@ -1,13 +1,34 @@
-﻿namespace StateMachine.States
+﻿using Core.Inventory;
+using Core.Systems;
+using UI.InventoryScreen.Presenters;
+
+namespace StateMachine.States
 {
-    public class InventoryState : IState
+    public class InventoryState : IPayloadState<InventoryData>
     {
-        public void Enter()
+        private readonly InventorySystem _inventorySystem;
+        private readonly InventoryScreenPresenter _inventoryScreenPresenter;
+
+        public InventoryState(
+            InventorySystem inventorySystem,
+            InventoryScreenPresenter inventoryScreenPresenter)
         {
-            throw new System.NotImplementedException();
+            _inventorySystem = inventorySystem;
+            _inventoryScreenPresenter = inventoryScreenPresenter;
+        }
+
+        public void Enter(InventoryData payload)
+        {
+            _inventorySystem.Initialize(payload);
+            _inventoryScreenPresenter.Initialize();
         }
 
         public void Exit()
+        {
+            _inventoryScreenPresenter.Dispose();
+        }
+
+        public void Enter()
         {
             throw new System.NotImplementedException();
         }

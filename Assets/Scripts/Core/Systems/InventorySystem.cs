@@ -15,10 +15,10 @@ namespace Core.Systems
 {
     public class InventorySystem
     {
-        private readonly InventoryData _inventoryData; 
+        private InventoryData _inventoryData; 
         private readonly IStaticDataService _staticDataService;
         private readonly IRandomService _randomService;
-        private readonly InventorySlotSelector _inventorySlotSelector;
+        private  InventorySlotSelector _inventorySlotSelector;
         private readonly IWallet _wallet;
         private readonly IInventoryUnlockService _inventoryUnlockService;
 
@@ -29,7 +29,7 @@ namespace Core.Systems
             IWallet wallet, 
             IInventoryUnlockService inventoryUnlockService)
         {
-            _inventoryData = inventoryData;
+            //_inventoryData = inventoryData;
             _staticDataService = staticDataService;
             _randomService = randomService;
             _wallet = wallet;
@@ -193,6 +193,12 @@ namespace Core.Systems
         public void TryUnlockSlot(int slotId)
         {
             _inventoryUnlockService.TryUnlockSlot(slotId);
+        }
+
+        public void Initialize(InventoryData data)
+        {
+            _inventoryData = data;
+            _inventorySlotSelector = new InventorySlotSelector(_inventoryData, _staticDataService);
         }
     }
 }

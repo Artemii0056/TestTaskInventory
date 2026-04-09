@@ -65,7 +65,7 @@ namespace UI.InventoryScreen.Presenters
             _inventoryUnlockService = inventoryUnlockService;
             _inventoryPriceData = inventoryPriceData;
 
-            _inventoryActionsView.ActionClicked += OnActionClicked;
+            // _inventoryActionsView.ActionClicked += OnActionClicked;
         }
 
         private void OnActionClicked(InventoryActionType actionType)
@@ -250,6 +250,12 @@ namespace UI.InventoryScreen.Presenters
         public void Dispose()
         {
             _inventoryActionsView.ActionClicked -= OnActionClicked;
+        }
+
+        public void Initialize()
+        {
+            _inventoryActionsView.ActionClicked += OnActionClicked;
+            Refresh();
         }
     }
 }
