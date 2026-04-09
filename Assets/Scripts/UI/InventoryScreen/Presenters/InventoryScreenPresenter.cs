@@ -6,6 +6,7 @@ using Core.Results;
 using Core.Results.DefaultNamespace.Results;
 using Core.Systems;
 using Core.Wallets;
+using Infrastructure.SaveLoad;
 using Infrastructure.StaticData;
 using Services.AmmoFactories;
 using Services.Debbuger;
@@ -14,7 +15,6 @@ using Services.ItemsFactory;
 using Services.RandomServices;
 using UI.Factories;
 using UI.InventoryScreen.Views;
-using UnityEngine;
 
 namespace UI.InventoryScreen.Presenters
 {
@@ -34,6 +34,7 @@ namespace UI.InventoryScreen.Presenters
         private readonly IStaticDataService _staticDataService;
         private readonly IInventoryUnlockService _inventoryUnlockService;
         private readonly IInventoryPriceData _inventoryPriceData;
+        private readonly IGameSaveService _gameSaveService;
 
         private List<SlotPrice> _slotPriceList;
 
@@ -50,7 +51,7 @@ namespace UI.InventoryScreen.Presenters
             IRandomService randomService,
             IStaticDataService staticDataService,
             IInventoryUnlockService inventoryUnlockService, 
-            IInventoryPriceData inventoryPriceData)
+            IInventoryPriceData inventoryPriceData, IGameSaveService gameSaveService)
         {
             _inventoryActionsView = inventoryActionsView;
             _inventoryGridView = inventoryGridView;
@@ -65,6 +66,7 @@ namespace UI.InventoryScreen.Presenters
             _staticDataService = staticDataService;
             _inventoryUnlockService = inventoryUnlockService;
             _inventoryPriceData = inventoryPriceData;
+            _gameSaveService = gameSaveService;
 
             // _inventoryActionsView.ActionClicked += OnActionClicked;
         }
@@ -98,6 +100,7 @@ namespace UI.InventoryScreen.Presenters
             }
 
             Refresh();
+            _gameSaveService.SaveInventory();
         }
 
         private void HandleShoot()
@@ -184,8 +187,7 @@ namespace UI.InventoryScreen.Presenters
 
             _inventoryGridView.DeleteAll();
 
-            foreach (InventorySlotData slot in
-                     _inventorySystem.Slots) //TODO Должен ли слот знать о своей цене? Нет, скорее 
+            foreach (InventorySlotData slot in _inventorySystem.Slots)
             {
                 InventorySlotView slotView = _inventorySlotViewFactory.Create();
 
@@ -200,8 +202,6 @@ namespace UI.InventoryScreen.Presenters
 
         private void OnSlotClicked(int id) 
         {
-            Debug.Log("12321232123");
-            
             InventorySlotData slot = _inventorySystem.GetSlotById(id);
 
             if (!slot.IsUnlocked)

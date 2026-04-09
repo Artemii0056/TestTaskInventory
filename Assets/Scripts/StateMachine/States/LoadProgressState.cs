@@ -1,4 +1,5 @@
 ﻿using Core.Inventory;
+using Core.Wallets;
 using Services;
 
 namespace StateMachine.States
@@ -19,6 +20,7 @@ namespace StateMachine.States
         public void Enter()
         {
             InventoryData inventoryData = _inventoryDataProvider.CreateOrLoad();
+            //IWallet wallet = //из сохранений
             _gameStateMachine.Enter<InventoryState, InventoryData>(inventoryData);
         }
 

@@ -23,21 +23,24 @@ namespace Core.Systems
         private readonly IInventoryUnlockService _inventoryUnlockService;
 
         public InventorySystem(
-            InventoryData inventoryData,
             IStaticDataService staticDataService,
             IRandomService randomService, 
             IWallet wallet, 
             IInventoryUnlockService inventoryUnlockService)
         {
-            //_inventoryData = inventoryData;
             _staticDataService = staticDataService;
             _randomService = randomService;
             _wallet = wallet;
             _inventoryUnlockService = inventoryUnlockService;
-            _inventorySlotSelector = new InventorySlotSelector(_inventoryData, _staticDataService);
         }
 
         public IReadOnlyList<InventorySlotData> Slots => _inventoryData.Slots;
+        
+        public void Initialize(InventoryData data)
+        {
+            _inventoryData = data;
+            _inventorySlotSelector = new InventorySlotSelector(_inventoryData, _staticDataService);
+        }
 
         public AddAmmoResult AddAmmo(InventoryItemType ammoType, int amount)
         {
@@ -192,13 +195,7 @@ namespace Core.Systems
 
         public void TryUnlockSlot(int slotId)
         {
-            _inventoryUnlockService.TryUnlockSlot(slotId);
-        }
-
-        public void Initialize(InventoryData data)
-        {
-            _inventoryData = data;
-            _inventorySlotSelector = new InventorySlotSelector(_inventoryData, _staticDataService);
+            _inventoryUnlockService.TryUnlockSlot(_inventoryData, slotId);
         }
     }
 }

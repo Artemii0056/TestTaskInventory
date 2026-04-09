@@ -1,7 +1,9 @@
+using Core.Inventory;
+
 namespace Services.InventoryUnlockServices
 {
     public interface IInventoryUnlockService
     {
-        bool TryUnlockSlot(int slotId);
+        bool TryUnlockSlot(InventoryData inventoryData, int slotId);
     }
 }

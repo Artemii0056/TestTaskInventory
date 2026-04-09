@@ -7,7 +7,7 @@ using Services.RandomServices;
 
 namespace Services.InventoryFactory
 {
-    public class InventorySystemFactory : IInventorySystemFactory
+    public class InventorySystemFactory : IInventorySystemFactory //TODO Не используется? 
     {
         private readonly IStaticDataService _staticDataService;
         private readonly IRandomService _randomService;
@@ -27,7 +27,7 @@ namespace Services.InventoryFactory
 
         public InventorySystem Create(InventoryData data)
         {
-            return new InventorySystem(data, _staticDataService, _randomService, _wallet, _inventoryUnlockService);
+            return new InventorySystem( _staticDataService, _randomService, _wallet, _inventoryUnlockService);
         }
     }
 }
