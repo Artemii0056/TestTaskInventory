@@ -62,9 +62,4 @@ namespace Services.InventoryUnlockServices
             return _inventoryData.Slots[slotIndex - 1].IsUnlocked == false;
         }
     }
-
-    public interface IInventoryUnlockService
-    {
-        bool TryUnlockSlot(int slotId);
-    }
 }

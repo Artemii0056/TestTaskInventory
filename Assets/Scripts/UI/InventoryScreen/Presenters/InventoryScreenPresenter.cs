@@ -14,6 +14,7 @@ using Services.ItemsFactory;
 using Services.RandomServices;
 using UI.Factories;
 using UI.InventoryScreen.Views;
+using UnityEngine;
 
 namespace UI.InventoryScreen.Presenters
 {
@@ -197,8 +198,10 @@ namespace UI.InventoryScreen.Presenters
             }
         }
 
-        private void OnSlotClicked(int id) //TODO Не забыть, что следующий слот открывается только после открытия предыдущего!!!
+        private void OnSlotClicked(int id) 
         {
+            Debug.Log("12321232123");
+            
             InventorySlotData slot = _inventorySystem.GetSlotById(id);
 
             if (!slot.IsUnlocked)
