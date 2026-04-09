@@ -9,6 +9,7 @@ using Core.Wallets;
 using Infrastructure.StaticData;
 using Services.AmmoFactories;
 using Services.Debbuger;
+using Services.InventoryUnlockServices;
 using Services.ItemsFactory;
 using Services.RandomServices;
 using UI.Factories;
@@ -30,7 +31,9 @@ namespace UI.InventoryScreen.Presenters
         private readonly IItemFactory _itemFactory;
         private readonly IRandomService _randomService;
         private readonly IStaticDataService _staticDataService;
-        
+        private readonly IInventoryUnlockService _inventoryUnlockService;
+        private readonly InventoryPriceData _inventoryPriceData;
+
         private List<SlotPrice> _slotPriceList;
 
         public InventoryScreenPresenter(
@@ -43,8 +46,10 @@ namespace UI.InventoryScreen.Presenters
             IDebugMessageService debugMessageService,
             InventorySlotViewFactory inventorySlotViewFactory,
             IItemFactory itemFactory,
-            IRandomService randomService, 
-            IStaticDataService staticDataService)
+            IRandomService randomService,
+            IStaticDataService staticDataService,
+            IInventoryUnlockService inventoryUnlockService, 
+            InventoryPriceData inventoryPriceData)
         {
             _inventoryActionsView = inventoryActionsView;
             _inventoryGridView = inventoryGridView;
@@ -57,6 +62,8 @@ namespace UI.InventoryScreen.Presenters
             _itemFactory = itemFactory;
             _randomService = randomService;
             _staticDataService = staticDataService;
+            _inventoryUnlockService = inventoryUnlockService;
+            _inventoryPriceData = inventoryPriceData;
 
             _inventoryActionsView.ActionClicked += OnActionClicked;
         }
@@ -173,16 +180,17 @@ namespace UI.InventoryScreen.Presenters
             {
                 slot.Clicked -= OnSlotClicked;
             }
-            
+
             _inventoryGridView.DeleteAll();
 
-            foreach (InventorySlotData slot in _inventorySystem.Slots) //TODO Должен ли слот знать о своей цене? Нет, скорее 
+            foreach (InventorySlotData slot in
+                     _inventorySystem.Slots) //TODO Должен ли слот знать о своей цене? Нет, скорее 
             {
                 InventorySlotView slotView = _inventorySlotViewFactory.Create();
 
                 slotView.Init(slot.Id);
-                slotView.Clicked += OnSlotClicked; //Не забыть отписаться при изменении
-                
+                slotView.Clicked += OnSlotClicked;
+
                 RenderSlot(slot, slotView);
 
                 _inventoryGridView.Add(slotView);
@@ -204,23 +212,22 @@ namespace UI.InventoryScreen.Presenters
 
         private void HandleOpenedSlotClick(int id)
         {
-            
-            
             Refresh();
         }
 
         private void HandleLockedSlotClick(int id)
         {
+            //_inventoryUnlockService.
             _inventorySystem.TryUnlockSlot(id);
-            
+
             Refresh();
         }
 
         private void RenderSlot(InventorySlotData slot, InventorySlotView slotView)
         {
-            if (!slot.IsUnlocked)
+            if (slot.IsUnlocked == false)
             {
-                slotView.RenderLocked(10); //TODO Разобраться тут
+                slotView.RenderLocked(_inventoryPriceData.GetPrice(slot.Id));
             }
             else if (slot.ItemStack == null)
             {

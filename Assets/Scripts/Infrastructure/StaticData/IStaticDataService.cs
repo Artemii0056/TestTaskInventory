@@ -19,5 +19,6 @@ namespace Infrastructure.StaticData
         bool IsItemOfKind(InventoryItemType type, ItemKind kind);
         InventoryItemData GetItemDataByType(InventoryItemType type);
         InventoryItemType GetAmmoItemType(AmmoType ammoType);
+        InventoryConfig InventoryConfig { get; }
     }
 }

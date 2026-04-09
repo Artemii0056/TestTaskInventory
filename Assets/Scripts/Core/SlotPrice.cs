@@ -1,5 +1,8 @@
-﻿namespace Core
+﻿using System;
+
+namespace Core
 {
+    [Serializable]
     public struct SlotPrice
     {
         public int Id;

@@ -1,9 +1,10 @@
-﻿using Core.Systems;
+﻿using Core.Inventory;
+using Core.Systems;
 
 namespace Services.InventoryFactory
 {
     public interface IInventoryFactory
     {
-        InventorySystem Create(int allCount, int openedCount);
+        InventorySystem Create(InventoryData data);
     }
 }

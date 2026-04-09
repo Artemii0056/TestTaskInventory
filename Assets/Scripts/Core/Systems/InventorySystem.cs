@@ -8,28 +8,32 @@ using Core.Results.DefaultNamespace.Results;
 using Core.Wallets;
 using Infrastructure.StaticData;
 using Services;
+using Services.InventoryUnlockServices;
 using Services.RandomServices;
-using UnityEngine;
 
 namespace Core.Systems
 {
     public class InventorySystem
     {
-        private readonly InventoryData _inventoryData;
+        private readonly InventoryData _inventoryData; 
         private readonly IStaticDataService _staticDataService;
         private readonly IRandomService _randomService;
         private readonly InventorySlotSelector _inventorySlotSelector;
         private readonly IWallet _wallet;
+        private readonly IInventoryUnlockService _inventoryUnlockService;
 
         public InventorySystem(
             InventoryData inventoryData,
             IStaticDataService staticDataService,
-            IRandomService randomService, IWallet wallet)
+            IRandomService randomService, 
+            IWallet wallet, 
+            IInventoryUnlockService inventoryUnlockService)
         {
             _inventoryData = inventoryData;
             _staticDataService = staticDataService;
             _randomService = randomService;
             _wallet = wallet;
+            _inventoryUnlockService = inventoryUnlockService;
             _inventorySlotSelector = new InventorySlotSelector(_inventoryData, _staticDataService);
         }
 
@@ -188,28 +192,7 @@ namespace Core.Systems
 
         public void TryUnlockSlot(int slotId)
         {
-            InventorySlotData slot = GetSlotById(slotId);
-
-            if (slot == null)
-                return;
-
-            if (slot.IsUnlocked)
-                return;
-
-            int price = GetUnlockPrice(slot);
-
-            if (!_wallet.TrySpend(price))
-            {
-                Debug.Log("12321");
-                return;
-            }
-
-            slot.Unlock();
-        }
-
-        private int GetUnlockPrice(InventorySlotData slot) //TODO Заглушка
-        {
-            return 100; // заглушка
+            _inventoryUnlockService.TryUnlockSlot(slotId);
         }
     }
 }

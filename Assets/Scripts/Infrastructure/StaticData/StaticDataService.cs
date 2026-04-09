@@ -20,7 +20,9 @@ namespace Infrastructure.StaticData
         private List<WeaponConfig> _weaponConfigs;
         
         private Dictionary<InventoryItemType, InventoryItemData> _itemDataByType;
-        
+
+        public InventoryConfig InventoryConfig { get; private set; }
+
         public StaticDataService(IResourceLoader resourceLoader)
         {
             _resourceLoader = resourceLoader;
@@ -28,32 +30,11 @@ namespace Infrastructure.StaticData
             LoadAmmoConfigs();
             LoadArmorConfigs();
             LoadWeaponConfigs();
+            LoadInventoryConfig();
 
             BuildItemDataDictionary();
         }
-        
-        private void BuildItemDataDictionary()
-        {
-            _itemDataByType = new Dictionary<InventoryItemType, InventoryItemData>();
 
-            foreach (WeaponConfig config in _weaponConfigs)
-                AddItemData(config.InventoryItemData);
-
-            foreach (AmmoConfig config in _ammoConfigs)
-                AddItemData(config.InventoryItemData);
-
-            foreach (ArmorConfig config in _armorConfigs)
-                AddItemData(config.InventoryItemData);
-        }
-        
-        private void AddItemData(InventoryItemData data)
-        {
-            if (_itemDataByType.ContainsKey(data.Type))
-                throw new Exception($"Duplicate item type: {data.Type}");
-
-            _itemDataByType.Add(data.Type, data);
-        }
-        
         public InventoryItemType GetAmmoItemType(AmmoType ammoType)
         {
             foreach (AmmoConfig config in GetAmmoConfigs())
@@ -115,6 +96,31 @@ namespace Infrastructure.StaticData
 
         public List<ArmorConfig> GetArmorConfigs() => 
             _armorConfigs.ToList();
+        
+        private void LoadInventoryConfig() => 
+            InventoryConfig = _resourceLoader.LoadScriptableObject<InventoryConfig>(Constants.InventoryConfigPath);
+
+        private void AddItemData(InventoryItemData data)
+        {
+            if (_itemDataByType.ContainsKey(data.Type))
+                throw new Exception($"Duplicate item type: {data.Type}");
+
+            _itemDataByType.Add(data.Type, data);
+        }
+        
+        private void BuildItemDataDictionary()
+        {
+            _itemDataByType = new Dictionary<InventoryItemType, InventoryItemData>();
+
+            foreach (WeaponConfig config in _weaponConfigs)
+                AddItemData(config.InventoryItemData);
+
+            foreach (AmmoConfig config in _ammoConfigs)
+                AddItemData(config.InventoryItemData);
+
+            foreach (ArmorConfig config in _armorConfigs)
+                AddItemData(config.InventoryItemData);
+        }
 
         private void LoadAmmoConfigs() => 
             _ammoConfigs = _resourceLoader.LoadAll<AmmoConfig>(Constants.ConfigsAmmosPath).ToList();

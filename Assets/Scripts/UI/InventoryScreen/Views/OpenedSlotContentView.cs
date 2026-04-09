@@ -10,7 +10,7 @@ namespace UI.InventoryScreen.Views
         [SerializeField] private Image _icon;
         [SerializeField] private TextMeshProUGUI _countText;
 
-        [SerializeField] private InventorySlotInfo _slotInfo;
+        [SerializeField] private InventorySlotInfo _slotInfo; //TODO По ходу класс не нужен
 
         private int _count;
 
