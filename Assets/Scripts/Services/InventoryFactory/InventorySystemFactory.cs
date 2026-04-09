@@ -27,7 +27,7 @@ namespace Services.InventoryFactory
 
         public InventorySystem Create(InventoryData data)
         {
-            return new InventorySystem( _staticDataService, _randomService, _wallet, _inventoryUnlockService);
+            return new InventorySystem( _staticDataService, _randomService, _inventoryUnlockService);
         }
     }
 }

@@ -9,6 +9,14 @@ namespace Core.Wallets
 
         public int Coins { get; private set; }
 
+        public void SetCoins(int amount)
+        {
+            if (amount <= 0)
+                throw new Exception("Cannot increase amount of coins");
+            
+            Coins = amount;
+        }
+        
         public void Increase(int amount)
         {
             if (amount <= 0)

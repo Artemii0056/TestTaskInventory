@@ -1,33 +1,35 @@
-﻿using StateMachine;
-using StateMachine.States;
+﻿using StateMachine.States;
 
-public class BaseStateMachine : IStateMachine
+namespace StateMachine
 {
-    private readonly IStateFactory _stateFactory;
-    private IExitableState _currentState;
-
-    public BaseStateMachine(IStateFactory stateFactory) => 
-        _stateFactory = stateFactory;
-
-    public void Enter<TState>() where TState : class, IState
+    public class BaseStateMachine : IStateMachine
     {
-        var state = ChangeState<TState>();
-        state?.Enter();
-    }
+        private readonly IStateFactory _stateFactory;
+        private IExitableState _currentState;
 
-    public void Enter<TState, TPayload>(TPayload payload) where TState : class, IPayloadState<TPayload>
-    {
-        var state = ChangeState<TState>();
-        state?.Enter(payload);
-    }
+        public BaseStateMachine(IStateFactory stateFactory) => 
+            _stateFactory = stateFactory;
 
-    private TState ChangeState<TState>() where TState : class, IExitableState
-    {
-        _currentState?.Exit();
+        public void Enter<TState>() where TState : class, IState
+        {
+            var state = ChangeState<TState>();
+            state?.Enter();
+        }
 
-        TState state = _stateFactory.GetState<TState>();
-        _currentState = state;
+        public void Enter<TState, TPayload>(TPayload payload) where TState : class, IPayloadState<TPayload>
+        {
+            var state = ChangeState<TState>();
+            state?.Enter(payload);
+        }
 
-        return state;
+        private TState ChangeState<TState>() where TState : class, IExitableState
+        {
+            _currentState?.Exit();
+
+            TState state = _stateFactory.GetState<TState>();
+            _currentState = state;
+
+            return state;
+        }
     }
 }

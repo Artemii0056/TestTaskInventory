@@ -30,7 +30,7 @@ namespace Infrastructure.SaveLoad
 
         public InventoryData ToRuntimeData(InventorySaveData saveData)
         {
-            var slots = new List<InventorySlotData>();
+            var slots = new List<InventorySlotData>(saveData.Slots.Count);
 
             foreach (InventorySlotSaveData slotSaveData in saveData.Slots)
             {

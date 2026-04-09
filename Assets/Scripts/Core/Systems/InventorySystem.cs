@@ -5,7 +5,6 @@ using Core.Configs.Weapons;
 using Core.Inventory;
 using Core.Results;
 using Core.Results.DefaultNamespace.Results;
-using Core.Wallets;
 using Infrastructure.StaticData;
 using Services;
 using Services.InventoryUnlockServices;
@@ -15,27 +14,25 @@ namespace Core.Systems
 {
     public class InventorySystem
     {
-        private InventoryData _inventoryData; 
         private readonly IStaticDataService _staticDataService;
         private readonly IRandomService _randomService;
-        private  InventorySlotSelector _inventorySlotSelector;
-        private readonly IWallet _wallet;
         private readonly IInventoryUnlockService _inventoryUnlockService;
+        private InventoryData _inventoryData;
+        private InventorySlotSelector _inventorySlotSelector;
 
         public InventorySystem(
             IStaticDataService staticDataService,
-            IRandomService randomService, 
-            IWallet wallet, 
+            IRandomService randomService,
             IInventoryUnlockService inventoryUnlockService)
         {
             _staticDataService = staticDataService;
             _randomService = randomService;
-            _wallet = wallet;
             _inventoryUnlockService = inventoryUnlockService;
         }
 
         public IReadOnlyList<InventorySlotData> Slots => _inventoryData.Slots;
-        
+        public InventoryData Data => _inventoryData;
+
         public void Initialize(InventoryData data)
         {
             _inventoryData = data;
@@ -55,15 +52,13 @@ namespace Core.Systems
             int remainingAmount = amount;
             List<SlotChange> changes = new();
 
-            int toAdd;
-
             while (remainingAmount > 0)
             {
                 if (_inventorySlotSelector.TryFindNotFullStack(ammoType, maxStack, out InventorySlotData slotWithAmmo))
                 {
                     int startCount = slotWithAmmo.ItemStack.Count;
                     int freeSpace = maxStack - startCount;
-                    toAdd = Math.Min(freeSpace, remainingAmount);
+                    int toAdd = Math.Min(freeSpace, remainingAmount);
 
                     remainingAmount -= toAdd;
                     slotWithAmmo.ItemStack.Increase(toAdd);
@@ -80,9 +75,9 @@ namespace Core.Systems
                 if (!_inventorySlotSelector.TryFindEmptyUnlockedSlot(out InventorySlotData emptySlot))
                     break;
 
-                toAdd = Math.Min(maxStack, remainingAmount);
-                remainingAmount -= toAdd;
-                emptySlot.SetItem(new ItemStack(ammoType, toAdd));
+                int amountToAdd = Math.Min(maxStack, remainingAmount);
+                remainingAmount -= amountToAdd;
+                emptySlot.SetItem(new ItemStack(ammoType, amountToAdd));
 
                 changes.Add(new SlotChange(
                     emptySlot.Id,
@@ -121,7 +116,8 @@ namespace Core.Systems
             result = new DeleteItemResult(
                 slot.ItemStack.Count,
                 slot.ItemStack.Type,
-                slot.Id);
+                slot.Id,
+                true);
 
             slot.Clear();
             return true;
@@ -171,6 +167,22 @@ namespace Core.Systems
             return totalWeight;
         }
 
+        public InventorySlotData GetSlotById(int slotId)
+        {
+            foreach (InventorySlotData slot in _inventoryData.Slots)
+            {
+                if (slot.Id == slotId)
+                    return slot;
+            }
+
+            throw new KeyNotFoundException($"Slot with id {slotId} not found.");
+        }
+
+        public bool TryUnlockSlot(int slotId)
+        {
+            return _inventoryUnlockService.TryUnlockSlot(_inventoryData.Slots, slotId);
+        }
+
         private void ConsumeOneAmmo(InventorySlotData ammoSlot)
         {
             if (ammoSlot.ItemStack.Count <= 1)
@@ -180,22 +192,6 @@ namespace Core.Systems
             }
 
             ammoSlot.ItemStack.Decrease(1);
-        }
-
-        public InventorySlotData GetSlotById(int slotId)
-        {
-            foreach (var slot in _inventoryData.Slots)
-            {
-                if (slot.Id == slotId)
-                    return slot;
-            }
-
-            throw new KeyNotFoundException();
-        }
-
-        public void TryUnlockSlot(int slotId)
-        {
-            _inventoryUnlockService.TryUnlockSlot(_inventoryData, slotId);
         }
     }
 }

@@ -1,4 +1,5 @@
 using Core.Inventory;
+using GameSaveDatas;
 using Infrastructure.SaveLoad;
 using Services.InventoryDataFactoris;
 
@@ -8,23 +9,26 @@ namespace Services
     {
         private readonly IGameSaveService _gameSaveService;
         private readonly IInventoryDataFactory _inventoryDataFactory;
+        private readonly IInventorySaveMapper _inventorySaveMapper;
 
         public InventoryDataProvider(
             IGameSaveService gameSaveService,
-            IInventoryDataFactory inventoryDataFactory)
+            IInventoryDataFactory inventoryDataFactory,
+            IInventorySaveMapper inventorySaveMapper)
         {
             _gameSaveService = gameSaveService;
             _inventoryDataFactory = inventoryDataFactory;
+            _inventorySaveMapper = inventorySaveMapper;
         }
 
         public InventoryData CreateOrLoad()
         {
             if (_gameSaveService.HasSave())
             {
-                InventoryData inventoryData = _gameSaveService.LoadInventory();
+                GameSaveData saveData = _gameSaveService.Load();
 
-                if (inventoryData != null)
-                    return inventoryData;
+                if (saveData?.Inventory != null)
+                    return _inventorySaveMapper.ToRuntimeData(saveData.Inventory);
             }
 
             return _inventoryDataFactory.Create();

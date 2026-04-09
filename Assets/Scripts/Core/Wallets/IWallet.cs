@@ -6,5 +6,6 @@
         int Coins { get; }
         bool TrySpend(int amount);
         bool CanSpend(int amount);
+        void SetCoins(int amount);
     }
 }

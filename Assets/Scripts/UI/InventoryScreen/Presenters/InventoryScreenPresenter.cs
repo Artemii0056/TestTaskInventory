@@ -1,19 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using Core;
 using Core.Inventory;
 using Core.Results;
-using Core.Results.DefaultNamespace.Results;
 using Core.Systems;
 using Core.Wallets;
-using Infrastructure.SaveLoad;
 using Infrastructure.StaticData;
-using Services.AmmoFactories;
+using Services.AddMoneyServices;
+using Services.AddRandomAmmoServices;
+using Services.AddRandomItemServices;
 using Services.Debbuger;
+using Services.DeleteRandomItemServices;
 using Services.InventoryUnlockServices;
-using Services.ItemsFactory;
-using Services.RandomServices;
+using Services.SaveProgressServices;
+using Services.ShootRandomWeaponServices;
 using UI.Factories;
+using UI.InventoryScreen.Services;
 using UI.InventoryScreen.Views;
 
 namespace UI.InventoryScreen.Presenters
@@ -26,51 +27,59 @@ namespace UI.InventoryScreen.Presenters
 
         private readonly InventorySystem _inventorySystem;
         private readonly IWallet _wallet;
-        private readonly IAmmoFactory _ammoFactory;
         private readonly IDebugMessageService _debugMessageService;
         private readonly InventorySlotViewFactory _inventorySlotViewFactory;
-        private readonly IItemFactory _itemFactory;
-        private readonly IRandomService _randomService;
-        private readonly IStaticDataService _staticDataService;
-        private readonly IInventoryUnlockService _inventoryUnlockService;
-        private readonly IInventoryPriceData _inventoryPriceData;
-        private readonly IGameSaveService _gameSaveService;
+        
+        private readonly IAddMoneyService _addMoneyService;
+        private readonly IAddRandomAmmoService _addRandomAmmoService;
+        private readonly IAddRandomItemService _addRandomItemService;
+        private readonly IShootRandomWeaponService _shootRandomWeaponService;
+        private readonly IDeleteRandomItemService _deleteItemService;
+        private readonly IInventorySlotRenderService _inventorySlotRenderService;
 
-        private List<SlotPrice> _slotPriceList;
-
+        private readonly ISaveProgressService _saveProgressService;
+        
         public InventoryScreenPresenter(
             InventoryActionsView inventoryActionsView,
             InventoryGridView inventoryGridView,
             InventoryInfoView inventoryInfoView,
             InventorySystem inventorySystem,
             IWallet wallet,
-            IAmmoFactory ammoFactory,
             IDebugMessageService debugMessageService,
             InventorySlotViewFactory inventorySlotViewFactory,
-            IItemFactory itemFactory,
-            IRandomService randomService,
-            IStaticDataService staticDataService,
-            IInventoryUnlockService inventoryUnlockService, 
-            IInventoryPriceData inventoryPriceData, IGameSaveService gameSaveService)
+            IAddMoneyService addMoneyService, 
+            IAddRandomAmmoService addRandomAmmoService, 
+            IAddRandomItemService addRandomItemService,
+            IShootRandomWeaponService shootRandomWeaponService, 
+            IDeleteRandomItemService deleteItemService, 
+            ISaveProgressService saveProgressService)
         {
             _inventoryActionsView = inventoryActionsView;
             _inventoryGridView = inventoryGridView;
             _inventoryInfoView = inventoryInfoView;
             _inventorySystem = inventorySystem;
             _wallet = wallet;
-            _ammoFactory = ammoFactory;
             _debugMessageService = debugMessageService;
             _inventorySlotViewFactory = inventorySlotViewFactory;
-            _itemFactory = itemFactory;
-            _randomService = randomService;
-            _staticDataService = staticDataService;
-            _inventoryUnlockService = inventoryUnlockService;
-            _inventoryPriceData = inventoryPriceData;
-            _gameSaveService = gameSaveService;
-
-            // _inventoryActionsView.ActionClicked += OnActionClicked;
+            _addMoneyService = addMoneyService;
+            _addRandomAmmoService = addRandomAmmoService;
+            _addRandomItemService = addRandomItemService;
+            _shootRandomWeaponService = shootRandomWeaponService;
+            _deleteItemService = deleteItemService;
+            _saveProgressService = saveProgressService;
         }
 
+        public void Initialize()
+        {
+            _inventoryActionsView.ActionClicked += OnActionClicked;
+            Refresh();
+        }
+        
+        public void Dispose()
+        {
+            _inventoryActionsView.ActionClicked -= OnActionClicked;
+        }
+        
         private void OnActionClicked(InventoryActionType actionType)
         {
             switch (actionType)
@@ -100,12 +109,13 @@ namespace UI.InventoryScreen.Presenters
             }
 
             Refresh();
-            _gameSaveService.SaveInventory();
+            
+            _saveProgressService.Save();
         }
 
         private void HandleShoot()
         {
-            ShootResult result = _inventorySystem.ShootRandomWeapon();
+            var result = _shootRandomWeaponService.Shoot();
 
             if (result.WeaponType == InventoryItemType.None)
             {
@@ -122,45 +132,43 @@ namespace UI.InventoryScreen.Presenters
             _debugMessageService.ShowMessage(
                 $"Выстрел из {result.WeaponType}, патроны: {result.AmmoType}, урон: {result.Damage}");
         }
-
         private void HandleDeleteItem()
         {
-            if (_inventorySystem.TryDeleteItem(out DeleteItemResult result))
+            DeleteItemResult result = _deleteItemService.Delete();
+
+            if (!result.Success)
             {
-                _debugMessageService.ShowMessage(
-                    $"Удалено ({result.Count}) [{result.ItemType}] из слота: [{result.SlotId}]");
+                _debugMessageService.ShowMessage("Инвентарь пуст");
                 return;
             }
 
-            _debugMessageService.ShowMessage("Инвентарь пуст");
+            _debugMessageService.ShowMessage(
+                $"Удалено ({result.Count}) [{result.ItemType}] из слота: [{result.SlotId}]");
         }
 
         private void HandleAddMoney()
         {
-            int value = _randomService.GenerateValue(10, 99);
-
-            _wallet.Increase(value);
-            _debugMessageService.ShowMessage($"Добавлено ({value}) монет");
+            AddMoneyResult result = _addMoneyService.AddRandom();
+            _debugMessageService.ShowMessage($"Добавлено ({result.Amount}) монет");
         }
 
         private void HandleAddItem()
         {
-            ItemStack stack = _itemFactory.CreateRandom();
+            AddRandomItemResult result = _addRandomItemService.AddRandom();
 
-            if (!_inventorySystem.TryAddItem(stack, out InventorySlotData slot))
+            if (!result.IsSuccess)
             {
                 _debugMessageService.ShowMessage("Инвентарь полон");
                 return;
             }
 
             _debugMessageService.ShowMessage(
-                $"Добавлено {slot.ItemStack.Type} в слот: {slot.Id}");
+                $"Добавлено {result.ItemType} в слот: {result.SlotId}");
         }
 
         private void HandleAddAmmo()
         {
-            ItemStack ammoStack = _ammoFactory.CreateRandom();
-            AddAmmoResult result = _inventorySystem.AddAmmo(ammoStack.Type, ammoStack.Count);
+            AddAmmoResult result = _addRandomAmmoService.AddRandom();
 
             foreach (SlotChange change in result.Changes)
             {
@@ -172,7 +180,7 @@ namespace UI.InventoryScreen.Presenters
                 _debugMessageService.ShowMessage("Инвентарь полон");
         }
 
-        public void Refresh()
+        private void Refresh()
         {
             RefreshGrid();
             RefreshInfo();
@@ -194,8 +202,8 @@ namespace UI.InventoryScreen.Presenters
                 slotView.Init(slot.Id);
                 slotView.Clicked += OnSlotClicked;
 
-                RenderSlot(slot, slotView);
-
+                _inventorySlotRenderService.Render(slot, slotView);
+                
                 _inventoryGridView.Add(slotView);
             }
         }
@@ -220,45 +228,16 @@ namespace UI.InventoryScreen.Presenters
 
         private void HandleLockedSlotClick(int id)
         {
-            //_inventoryUnlockService.
-            _inventorySystem.TryUnlockSlot(id);
+            if (_inventorySystem.TryUnlockSlot(id))
+                _saveProgressService.Save();
 
             Refresh();
-        }
-
-        private void RenderSlot(InventorySlotData slot, InventorySlotView slotView)
-        {
-            if (slot.IsUnlocked == false)
-            {
-                slotView.RenderLocked(_inventoryPriceData.GetPrice(slot.Id));
-            }
-            else if (slot.ItemStack == null)
-            {
-                slotView.RenderEmptyOpened();
-            }
-            else
-            {
-                slotView.RenderOpened(
-                    _staticDataService.GetSpriteByType(slot.ItemStack.Type),
-                    slot.ItemStack.Count);
-            }
         }
 
         private void RefreshInfo()
         {
             _inventoryInfoView.DrawMoney(_wallet.Coins);
             _inventoryInfoView.DrawWeight(_inventorySystem.GetTotalWeight());
-        }
-
-        public void Dispose()
-        {
-            _inventoryActionsView.ActionClicked -= OnActionClicked;
-        }
-
-        public void Initialize()
-        {
-            _inventoryActionsView.ActionClicked += OnActionClicked;
-            Refresh();
         }
     }
 }

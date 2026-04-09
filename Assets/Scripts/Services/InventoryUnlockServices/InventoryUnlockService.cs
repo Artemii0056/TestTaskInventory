@@ -1,4 +1,5 @@
-﻿using Core.Inventory;
+﻿using System.Collections.Generic;
+using Core.Inventory;
 using Core.Wallets;
 
 namespace Services.InventoryUnlockServices
@@ -16,19 +17,19 @@ namespace Services.InventoryUnlockServices
             _inventoryPriceData = inventoryPriceData;
         }
 
-        public bool TryUnlockSlot(InventoryData inventoryData, int slotId)
+        public bool TryUnlockSlot(IReadOnlyList<InventorySlotData> slots, int slotId)
         {
-            int slotIndex = GetSlotIndexById(inventoryData, slotId);
+            int slotIndex = GetSlotIndexById(slots, slotId);
 
             if (slotIndex < 0)
                 return false;
 
-            InventorySlotData slot = inventoryData.Slots[slotIndex];
+            InventorySlotData slot = slots[slotIndex];
 
             if (slot.IsUnlocked)
                 return false;
 
-            if (IsPreviousSlotLocked(inventoryData, slotIndex))
+            if (IsPreviousSlotLocked(slots, slotIndex))
                 return false;
 
             int price = _inventoryPriceData.GetPrice(slot.Id);
@@ -40,23 +41,23 @@ namespace Services.InventoryUnlockServices
             return true;
         }
 
-        private int GetSlotIndexById(InventoryData inventoryData, int slotId)
+        private int GetSlotIndexById(IReadOnlyList<InventorySlotData> slots, int slotId)
         {
-            for (int i = 0; i < inventoryData.Slots.Count; i++)
+            for (int i = 0; i < slots.Count; i++)
             {
-                if (inventoryData.Slots[i].Id == slotId)
+                if (slots[i].Id == slotId)
                     return i;
             }
 
             return -1;
         }
 
-        private bool IsPreviousSlotLocked(InventoryData inventoryData, int slotIndex)
+        private bool IsPreviousSlotLocked(IReadOnlyList<InventorySlotData> slots, int slotIndex)
         {
             if (slotIndex == 0)
                 return false;
 
-            return inventoryData.Slots[slotIndex - 1].IsUnlocked == false;
+            return slots[slotIndex - 1].IsUnlocked == false;
         }
     }
 }

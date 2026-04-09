@@ -1,12 +1,11 @@
-﻿using Core.Inventory;
+﻿using GameSaveDatas;
 
 namespace Infrastructure.SaveLoad
 {
     public interface IGameSaveService
     {
         bool HasSave();
-        InventoryData LoadInventory();
-        void SaveInventory(InventoryData inventoryData);
-        InventoryData LoadInventoryOrDefault(InventoryData defaultInventoryData);
+        GameSaveData Load();
+        void Save(GameSaveData data);
     }
 }
