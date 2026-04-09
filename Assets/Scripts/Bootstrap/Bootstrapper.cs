@@ -35,34 +35,34 @@ namespace Bootstrap
 
         public void Init()
         {
-            Wallet wallet = new Wallet(0);
-            ResourceLoader resourceLoader = new ResourceLoader();
-            IStaticDataService staticDataService = new StaticDataService(resourceLoader);
-            IRandomService randomService = new RandomService();
-            IItemFactory itemFactory = new ItemFactory(staticDataService, randomService);
-            IUniqueIdService uniqueIdService = new UniqueIdService();
-            IInventoryDataFactory inventoryDataFactory = new InventoryDataFactory(staticDataService, uniqueIdService);
-
-            InventoryPriceData priceData = new InventoryPriceData(staticDataService.InventoryConfig);
-
-            InventoryData inventoryData = inventoryDataFactory.Create();
-
-            IInventoryUnlockService unlockService = new InventoryUnlockService(inventoryData, wallet, priceData);
-            IInventorySystemFactory systemFactory = new InventorySystemFactory( staticDataService, randomService, wallet, unlockService);
-            InventorySystem inventorySystem = systemFactory.Create(inventoryData);
-            InventorySlotViewFactory inventorySlotViewFactory = new InventorySlotViewFactory(_inventorySlotViewPrefab);
-
-            IAmmoFactory ammoFactory = new AmmoFactory(randomService, staticDataService);
-
-            IDebugMessageService debugMessageService = new DebugMessageService();
-
-
-            InventoryScreenPresenter presenter = new InventoryScreenPresenter(_inventoryActionsView, _inventoryGridView,
-                _inventoryInfoView, inventorySystem, wallet, ammoFactory, debugMessageService, inventorySlotViewFactory,
-                itemFactory, randomService, staticDataService, unlockService, priceData);
-            _inventoryScreenPresenter = presenter;
-
-            presenter.Refresh();
+            // Wallet wallet = new Wallet(0);
+            // ResourceLoader resourceLoader = new ResourceLoader();
+            // IStaticDataService staticDataService = new StaticDataService(resourceLoader);
+            // IRandomService randomService = new RandomService();
+            // IItemFactory itemFactory = new ItemFactory(staticDataService, randomService);
+            // IUniqueIdService uniqueIdService = new UniqueIdService();
+            // IInventoryDataFactory inventoryDataFactory = new InventoryDataFactory(staticDataService, uniqueIdService);
+            //
+            // InventoryPriceData priceData = new InventoryPriceData(staticDataService.InventoryConfig);
+            //
+            // InventoryData inventoryData = inventoryDataFactory.Create();
+            //
+            // IInventoryUnlockService unlockService = new InventoryUnlockService(inventoryData, wallet, priceData);
+            // IInventorySystemFactory systemFactory = new InventorySystemFactory( staticDataService, randomService, wallet, unlockService);
+            // InventorySystem inventorySystem = systemFactory.Create(inventoryData);
+            // InventorySlotViewFactory inventorySlotViewFactory = new InventorySlotViewFactory(_inventorySlotViewPrefab);
+            //
+            // IAmmoFactory ammoFactory = new AmmoFactory(randomService, staticDataService);
+            //
+            // IDebugMessageService debugMessageService = new DebugMessageService();
+            //
+            //
+            // InventoryScreenPresenter presenter = new InventoryScreenPresenter(_inventoryActionsView, _inventoryGridView,
+            //     _inventoryInfoView, inventorySystem, wallet, ammoFactory, debugMessageService, inventorySlotViewFactory,
+            //     itemFactory, randomService, staticDataService, unlockService, priceData);
+            // _inventoryScreenPresenter = presenter;
+            //
+            // presenter.Refresh();
         }
 
         private void OnDisable()

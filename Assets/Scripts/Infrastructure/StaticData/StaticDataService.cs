@@ -7,6 +7,7 @@ using Core.Configs.Ammo;
 using Core.Configs.Armors;
 using Core.Configs.Weapons;
 using Infrastructure.ResourceLoad;
+using UI.InventoryScreen.Views;
 using UnityEngine;
 
 namespace Infrastructure.StaticData
@@ -22,6 +23,7 @@ namespace Infrastructure.StaticData
         private Dictionary<InventoryItemType, InventoryItemData> _itemDataByType;
 
         public InventoryConfig InventoryConfig { get; private set; }
+        public InventorySlotView InventorySlotView { get; private set; }
 
         public StaticDataService(IResourceLoader resourceLoader)
         {
@@ -36,7 +38,10 @@ namespace Infrastructure.StaticData
             LoadInventoryConfig();
 
             BuildItemDataDictionary();
+            LoadInventorySlotView();
         }
+
+        
 
         public InventoryItemType GetAmmoItemType(AmmoType ammoType)
         {
@@ -102,6 +107,9 @@ namespace Infrastructure.StaticData
         
         private void LoadInventoryConfig() => 
             InventoryConfig = _resourceLoader.LoadScriptableObject<InventoryConfig>(Constants.InventoryConfigPath);
+
+        private void LoadInventorySlotView() => 
+            InventorySlotView = _resourceLoader.Load<InventorySlotView>(Constants.InventorySlotPath);
 
         private void AddItemData(InventoryItemData data)
         {

@@ -1,15 +1,21 @@
 using Core.Inventory;
 using Core.Systems;
 using Core.Wallets;
+using DefaultNamespace;
 using GameSaveDatas;
+using Infrastructure.ResourceLoad;
 using Infrastructure.SaveLoad;
 using Infrastructure.StaticData;
 using Services;
 using Services.AmmoFactories;
 using Services.Debbuger;
+using Services.IdGenerator;
 using Services.InventoryDataFactoris;
+using Services.InventoryUnlockServices;
 using Services.ItemsFactory;
 using Services.RandomServices;
+using StateMachine;
+using StateMachine.States;
 using UI.Factories;
 using UI.InventoryScreen.Presenters;
 using UI.InventoryScreen.Views;
@@ -23,7 +29,7 @@ public class GameLifetimeScope : LifetimeScope
     [SerializeField] private InventoryGridView _inventoryGridView;
     [SerializeField] private InventoryInfoView _inventoryInfoView;
 
-    protected override void Configure(IContainerBuilder builder)
+    protected override void Configure( IContainerBuilder builder)
     {
         // scene views
         builder.RegisterComponent(_inventoryActionsView);
@@ -40,15 +46,21 @@ public class GameLifetimeScope : LifetimeScope
 
         builder.Register<InventoryScreenPresenter>(Lifetime.Singleton);
         
-        builder.Register<IInventoryDataFactory, InventoryDataFactory>(Lifetime.Singleton);
-        
-        builder.Register<IInventoryDataProvider, InventoryDataProvider>(Lifetime.Singleton);
-
         builder.Register<InventoryData>(resolver =>
         {
             IInventoryDataProvider provider = resolver.Resolve<IInventoryDataProvider>();
             return provider.CreateOrLoad();
         }, Lifetime.Singleton);
+        
+        builder.Register<StateFactory>(Lifetime.Singleton).As<IStateFactory>();
+        builder.Register<GameStateMachine>(Lifetime.Singleton).As<IGameStateMachine>();
+
+        builder.Register<BootstrapState>(Lifetime.Singleton);
+        builder.Register<LoadProgressState>(Lifetime.Singleton);
+        builder.Register<InventoryState>(Lifetime.Singleton);
+        builder.Register<SaveProgressState>(Lifetime.Singleton);
+        
+        builder.RegisterEntryPoint<GameEntryPoint>();
     }
 
     private void RegisterSaveServices(IContainerBuilder builder)
@@ -60,16 +72,24 @@ public class GameLifetimeScope : LifetimeScope
 
     private void RegisterServices(IContainerBuilder builder)
     {
-        builder.Register<Wallet>(Lifetime.Singleton).As<IWallet>();
+        builder.Register<IWallet>(_ => new Wallet(0), Lifetime.Singleton);
         builder.Register<RandomService>(Lifetime.Singleton).As<IRandomService>();
         builder.Register<StaticDataService>(Lifetime.Singleton).As<IStaticDataService>();
         builder.Register<DebugMessageService>(Lifetime.Singleton).As<IDebugMessageService>();
+        builder.Register<ResourceLoader>(Lifetime.Singleton).As<IResourceLoader>();
+        builder.Register<UniqueIdService>(Lifetime.Singleton).As<IUniqueIdService>();
+        builder.Register<IInventoryUnlockService, InventoryUnlockService>(Lifetime.Singleton);
+        
+        builder.Register<IInventoryPriceData, InventoryPriceData>(Lifetime.Singleton);
     }
 
     private void RegisterFactories(IContainerBuilder builder)
     {
         builder.Register<AmmoFactory>(Lifetime.Singleton).As<IAmmoFactory>();
         builder.Register<ItemFactory>(Lifetime.Singleton).As<IItemFactory>();
+        
+        builder.Register<InventoryDataFactory>(Lifetime.Singleton).As<IInventoryDataFactory>();
+        builder.Register<InventoryDataProvider>(Lifetime.Singleton).As<IInventoryDataProvider>();
         builder.Register<InventorySlotViewFactory>(Lifetime.Singleton);
     }
 }

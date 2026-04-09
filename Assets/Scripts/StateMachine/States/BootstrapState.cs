@@ -15,6 +15,7 @@ namespace StateMachine.States
 
         public void Enter()
         {
+            _staticDataService.LoadAll();
             _gameStateMachine.Enter<LoadProgressState>();
         }
 

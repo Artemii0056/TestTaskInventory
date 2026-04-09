@@ -1,4 +1,5 @@
-﻿using UI.InventoryScreen.Views;
+﻿using Infrastructure.StaticData;
+using UI.InventoryScreen.Views;
 using UnityEngine;
 
 namespace UI.Factories
@@ -7,9 +8,9 @@ namespace UI.Factories
     {
         private InventorySlotView _prefab;
 
-        public InventorySlotViewFactory(InventorySlotView prefab)
+        public InventorySlotViewFactory(IStaticDataService staticDataService)
         {
-            _prefab = prefab;
+            _prefab = staticDataService.InventorySlotView;
         }
 
         public InventorySlotView Create()

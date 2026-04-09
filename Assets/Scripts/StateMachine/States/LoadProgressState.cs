@@ -6,11 +6,11 @@ namespace StateMachine.States
     public class LoadProgressState : IState
     {
         private readonly IInventoryDataProvider _inventoryDataProvider;
-        private readonly GameStateMachine _gameStateMachine;
+        private readonly IGameStateMachine _gameStateMachine;
 
         public LoadProgressState(
             IInventoryDataProvider inventoryDataProvider,
-            GameStateMachine gameStateMachine)
+            IGameStateMachine gameStateMachine)
         {
             _inventoryDataProvider = inventoryDataProvider;
             _gameStateMachine = gameStateMachine;

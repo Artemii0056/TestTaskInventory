@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using Core;
+using Infrastructure.StaticData;
 
 namespace Services.InventoryUnlockServices
 {
-    public class InventoryPriceData
+    public class InventoryPriceData : IInventoryPriceData
     {
         private readonly Dictionary<int, int> _lockedPrices;
 
-        public InventoryPriceData(InventoryConfig inventoryConfig)
+        public InventoryPriceData(IStaticDataService staticDataService)
         {
             _lockedPrices = new Dictionary<int, int>();
             
-            foreach (var slot in inventoryConfig.LockedPrices) 
+            foreach (var slot in staticDataService.InventoryConfig.LockedPrices) 
                 _lockedPrices[slot.Id] = slot.Price;
         }
 

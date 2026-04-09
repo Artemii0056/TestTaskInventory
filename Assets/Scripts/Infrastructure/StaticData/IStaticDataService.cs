@@ -4,6 +4,7 @@ using Core.Configs;
 using Core.Configs.Ammo;
 using Core.Configs.Armors;
 using Core.Configs.Weapons;
+using UI.InventoryScreen.Views;
 using UnityEngine;
 
 namespace Infrastructure.StaticData
@@ -21,5 +22,6 @@ namespace Infrastructure.StaticData
         InventoryItemData GetItemDataByType(InventoryItemType type);
         InventoryItemType GetAmmoItemType(AmmoType ammoType);
         InventoryConfig InventoryConfig { get; }
+        InventorySlotView InventorySlotView { get; }
     }
 }

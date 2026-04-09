@@ -6,9 +6,9 @@ namespace DefaultNamespace
 {
     public class GameEntryPoint : IStartable
     {
-        private readonly GameStateMachine _gameStateMachine;
+        private readonly IGameStateMachine _gameStateMachine;
 
-        public GameEntryPoint(GameStateMachine gameStateMachine)
+        public GameEntryPoint(IGameStateMachine gameStateMachine)
         {
             _gameStateMachine = gameStateMachine;
         }

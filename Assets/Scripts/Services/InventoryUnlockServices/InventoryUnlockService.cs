@@ -6,13 +6,13 @@ namespace Services.InventoryUnlockServices
     public class InventoryUnlockService : IInventoryUnlockService
     {
         private readonly InventoryData _inventoryData;
-        private readonly InventoryPriceData _inventoryPriceData;
+        private readonly IInventoryPriceData _inventoryPriceData;
         private readonly IWallet _wallet;
 
         public InventoryUnlockService(
             InventoryData inventoryData,
             IWallet wallet,
-            InventoryPriceData inventoryPriceData)
+            IInventoryPriceData inventoryPriceData)
         {
             _inventoryData = inventoryData;
             _wallet = wallet;

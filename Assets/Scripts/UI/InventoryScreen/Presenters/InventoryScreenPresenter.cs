@@ -32,7 +32,7 @@ namespace UI.InventoryScreen.Presenters
         private readonly IRandomService _randomService;
         private readonly IStaticDataService _staticDataService;
         private readonly IInventoryUnlockService _inventoryUnlockService;
-        private readonly InventoryPriceData _inventoryPriceData;
+        private readonly IInventoryPriceData _inventoryPriceData;
 
         private List<SlotPrice> _slotPriceList;
 
@@ -49,7 +49,7 @@ namespace UI.InventoryScreen.Presenters
             IRandomService randomService,
             IStaticDataService staticDataService,
             IInventoryUnlockService inventoryUnlockService, 
-            InventoryPriceData inventoryPriceData)
+            IInventoryPriceData inventoryPriceData)
         {
             _inventoryActionsView = inventoryActionsView;
             _inventoryGridView = inventoryGridView;
