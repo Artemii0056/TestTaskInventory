@@ -20,7 +20,7 @@ namespace Services.AddMoneyServices
 
         public AddMoneyResult AddRandom()
         {
-            int amount = _randomService.GenerateValue(Constants.MinMoneyGenerate, Constants.MaxMoneyGenerate + 1); //TODO Вынести чиселки
+            int amount = _randomService.GenerateValue(Constants.MinMoneyGenerate, Constants.MaxMoneyGenerate + 1);
 
             _wallet.Increase(amount);
 

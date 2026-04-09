@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using Core;
 using Core.Inventory;
-using GameSaveDatas;
 
-namespace Infrastructure.SaveLoad
+namespace GameSaveDatas
 {
     public class InventorySaveMapper : IInventorySaveMapper
     {

@@ -1,6 +1,5 @@
 ﻿using Core.Wallets;
 using GameSaveDatas;
-using Infrastructure.SaveLoad;
 
 namespace StateMachine.States
 {
@@ -33,7 +32,7 @@ namespace StateMachine.States
 
             _gameSaveService.Save(saveData);
 
-            _gameStateMachine.Enter<InventoryState, GameRuntimeData>(payload);
+            _gameStateMachine.Enter<GameState, GameRuntimeData>(payload);
         }
 
         public void Exit()

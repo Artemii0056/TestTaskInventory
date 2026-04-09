@@ -1,29 +1,27 @@
-﻿using GameSaveDatas;
-
-namespace Infrastructure.SaveLoad
+﻿namespace GameSaveDatas
 {
     public class GameSaveService : IGameSaveService
     {
-        private readonly ISaveLoadService _saveLoadService;
+        private readonly ISaveLoadAdapter _saveLoadAdapter;
 
-        public GameSaveService(ISaveLoadService saveLoadService)
+        public GameSaveService(ISaveLoadAdapter saveLoadAdapter)
         {
-            _saveLoadService = saveLoadService;
+            _saveLoadAdapter = saveLoadAdapter;
         }
 
         public bool HasSave()
         {
-            return _saveLoadService.HasSave();
+            return _saveLoadAdapter.HasSave();
         }
 
         public GameSaveData Load()
         {
-            return _saveLoadService.Load();
+            return _saveLoadAdapter.Load();
         }
 
         public void Save(GameSaveData data)
         {
-            _saveLoadService.Save(data);
+            _saveLoadAdapter.Save(data);
         }
     }
 }

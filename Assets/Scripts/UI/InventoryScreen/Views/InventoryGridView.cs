@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace UI.InventoryScreen.Views
@@ -21,18 +20,6 @@ namespace UI.InventoryScreen.Views
         {
             _slots.Add(view);
             view.transform.SetParent(_content);
-        }
-
-        public void DeleteAll()
-        {
-            if (_slots.Count == 0)
-                return;
-
-            foreach (var slot in _slots.ToList())
-            {
-                Destroy(slot.gameObject);
-                _slots.Remove(slot);
-            }
         }
     }
 }

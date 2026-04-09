@@ -10,5 +10,6 @@ namespace Infrastructure.StaticData
         
         public const int MinMoneyGenerate = 9;
         public const int MaxMoneyGenerate = 99;
+        public const string FileNamePath = "save.json";
     }
 }

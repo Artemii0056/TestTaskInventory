@@ -1,10 +1,8 @@
 using Core.Inventory;
 using Core.Systems;
 using Core.Wallets;
-using DefaultNamespace;
 using GameSaveDatas;
 using Infrastructure.ResourceLoad;
-using Infrastructure.SaveLoad;
 using Infrastructure.StaticData;
 using Services;
 using Services.AddMoneyServices;
@@ -12,7 +10,6 @@ using Services.AddRandomAmmoServices;
 using Services.AddRandomItemServices;
 using Services.AmmoFactories;
 using Services.Debbuger;
-using Services.DeleteItemServices;
 using Services.DeleteRandomItemServices;
 using Services.IdGenerator;
 using Services.InventoryDataFactoris;
@@ -21,18 +18,16 @@ using Services.ItemsFactory;
 using Services.RandomServices;
 using Services.SaveProgressServices;
 using Services.ShootRandomWeaponServices;
-using Services.ShootServices;
 using StateMachine;
 using StateMachine.States;
 using UI.Factories;
 using UI.InventoryScreen.Presenters;
-using UI.InventoryScreen.Services;
 using UI.InventoryScreen.Views;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-public class GameLifetimeScope : LifetimeScope
+public class GameLifetimeScope : LifetimeScope //TODO Убрать из папки DI кинутьв Скрипты
 {
     [SerializeField] private InventoryActionsView _inventoryActionsView;
     [SerializeField] private InventoryGridView _inventoryGridView;
@@ -40,7 +35,6 @@ public class GameLifetimeScope : LifetimeScope
 
     protected override void Configure( IContainerBuilder builder)
     {
-        // scene views
         builder.RegisterComponent(_inventoryActionsView);
         builder.RegisterComponent(_inventoryGridView);
         builder.RegisterComponent(_inventoryInfoView);
@@ -66,7 +60,7 @@ public class GameLifetimeScope : LifetimeScope
 
         builder.Register<BootstrapState>(Lifetime.Singleton);
         builder.Register<LoadProgressState>(Lifetime.Singleton);
-        builder.Register<InventoryState>(Lifetime.Singleton);
+        builder.Register<GameState>(Lifetime.Singleton);
         builder.Register<SaveProgressState>(Lifetime.Singleton);
         
         builder.RegisterEntryPoint<GameEntryPoint>();
@@ -74,7 +68,7 @@ public class GameLifetimeScope : LifetimeScope
 
     private void RegisterSaveServices(IContainerBuilder builder)
     {
-        builder.Register<JsonSaveLoadService>(Lifetime.Singleton).As<ISaveLoadService>();
+        builder.Register<JsonSaveLoadAdapter>(Lifetime.Singleton).As<ISaveLoadAdapter>();
         builder.Register<InventorySaveMapper>(Lifetime.Singleton).As<IInventorySaveMapper>();
         builder.Register<GameSaveService>(Lifetime.Singleton).As<IGameSaveService>();
     }

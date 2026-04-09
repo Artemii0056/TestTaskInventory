@@ -10,10 +10,4 @@ namespace Services.Debbuger
         public void ShowErrorMessage(string message) => 
             Debug.LogError(message);
     }
-
-    public interface IDebugMessageService
-    {
-        void ShowMessage(string message);
-        void ShowErrorMessage(string message);
-    }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UI.Factories
 {
-    public class InventorySlotViewFactory //TODO Подрубить пул!!!
+    public class InventorySlotViewFactory
     {
         private InventorySlotView _prefab;
 

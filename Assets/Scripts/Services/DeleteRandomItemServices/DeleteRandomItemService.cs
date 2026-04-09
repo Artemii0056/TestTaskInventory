@@ -1,8 +1,7 @@
 ﻿using Core.Results;
 using Core.Systems;
-using Services.DeleteRandomItemServices;
 
-namespace Services.DeleteItemServices
+namespace Services.DeleteRandomItemServices
 {
     public class DeleteRandomItemService : IDeleteRandomItemService
     {

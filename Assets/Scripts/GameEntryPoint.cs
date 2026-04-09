@@ -2,20 +2,17 @@
 using StateMachine.States;
 using VContainer.Unity;
 
-namespace DefaultNamespace
+public class GameEntryPoint : IStartable
 {
-    public class GameEntryPoint : IStartable
+    private readonly IGameStateMachine _gameStateMachine;
+
+    public GameEntryPoint(IGameStateMachine gameStateMachine)
     {
-        private readonly IGameStateMachine _gameStateMachine;
+        _gameStateMachine = gameStateMachine;
+    }
 
-        public GameEntryPoint(IGameStateMachine gameStateMachine)
-        {
-            _gameStateMachine = gameStateMachine;
-        }
-
-        public void Start()
-        {
-            _gameStateMachine.Enter<BootstrapState>();
-        }
+    public void Start()
+    {
+        _gameStateMachine.Enter<BootstrapState>();
     }
 }

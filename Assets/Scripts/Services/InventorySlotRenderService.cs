@@ -3,7 +3,7 @@ using Infrastructure.StaticData;
 using Services.InventoryUnlockServices;
 using UI.InventoryScreen.Views;
 
-namespace UI.InventoryScreen.Services
+namespace Services
 {
     public class InventorySlotRenderService : IInventorySlotRenderService
     {

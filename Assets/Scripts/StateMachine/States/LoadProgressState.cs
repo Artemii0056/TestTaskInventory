@@ -1,7 +1,6 @@
 ﻿using Core.Inventory;
 using Core.Wallets;
 using GameSaveDatas;
-using Infrastructure.SaveLoad;
 using Services.InventoryDataFactoris;
 
 namespace StateMachine.States
@@ -50,7 +49,7 @@ namespace StateMachine.States
 
             GameRuntimeData runtimeData = new GameRuntimeData(inventoryData);
 
-            _gameStateMachine.Enter<InventoryState, GameRuntimeData>(runtimeData);
+            _gameStateMachine.Enter<GameState, GameRuntimeData>(runtimeData);
         }
 
         public void Exit()

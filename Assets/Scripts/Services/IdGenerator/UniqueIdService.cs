@@ -1,6 +1,6 @@
 ﻿namespace Services.IdGenerator
 {
-    public class UniqueIdService : IUniqueIdService //TODO Убрать? 
+    public class UniqueIdService : IUniqueIdService 
     {
         private int _current;
 

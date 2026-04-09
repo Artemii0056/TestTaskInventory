@@ -4,17 +4,15 @@ using Core.Inventory;
 using Core.Results;
 using Core.Systems;
 using Core.Wallets;
-using Infrastructure.StaticData;
+using Services;
 using Services.AddMoneyServices;
 using Services.AddRandomAmmoServices;
 using Services.AddRandomItemServices;
 using Services.Debbuger;
 using Services.DeleteRandomItemServices;
-using Services.InventoryUnlockServices;
 using Services.SaveProgressServices;
 using Services.ShootRandomWeaponServices;
 using UI.Factories;
-using UI.InventoryScreen.Services;
 using UI.InventoryScreen.Views;
 
 namespace UI.InventoryScreen.Presenters
@@ -74,12 +72,30 @@ namespace UI.InventoryScreen.Presenters
         public void Initialize()
         {
             _inventoryActionsView.ActionClicked += OnActionClicked;
+            
+            foreach (InventorySlotData slot in _inventorySystem.Slots)
+            {
+                InventorySlotView slotView = _inventorySlotViewFactory.Create();
+
+                slotView.Init(slot.Id);
+                slotView.Clicked += OnSlotClicked;
+
+                _inventorySlotRenderService.Render(slot, slotView);
+                
+                _inventoryGridView.Add(slotView);
+            }
+            
             Refresh();
         }
         
         public void Dispose()
         {
-            _inventoryActionsView.ActionClicked -= OnActionClicked;
+            _inventoryActionsView.ActionClicked -= OnActionClicked; 
+            
+            foreach (var slot in _inventoryGridView.Slots)
+            {
+                slot.Clicked -= OnSlotClicked;
+            }
         }
         
         private void OnActionClicked(InventoryActionType actionType)
@@ -121,7 +137,7 @@ namespace UI.InventoryScreen.Presenters
 
             if (result.WeaponType == InventoryItemType.None)
             {
-                _debugMessageService.ShowMessage("Нет оружия");
+                _debugMessageService.ShowErrorMessage("Нет оружия");
                 return;
             }
 
@@ -134,13 +150,14 @@ namespace UI.InventoryScreen.Presenters
             _debugMessageService.ShowMessage(
                 $"Выстрел из {result.WeaponType}, патроны: {result.AmmoType}, урон: {result.Damage}");
         }
+        
         private void HandleDeleteItem()
         {
             DeleteItemResult result = _deleteItemService.Delete();
 
             if (!result.Success)
             {
-                _debugMessageService.ShowMessage("Инвентарь пуст");
+                _debugMessageService.ShowErrorMessage("Инвентарь пуст");
                 return;
             }
 
@@ -160,7 +177,7 @@ namespace UI.InventoryScreen.Presenters
 
             if (!result.IsSuccess)
             {
-                _debugMessageService.ShowMessage("Инвентарь полон");
+                _debugMessageService.ShowErrorMessage("Инвентарь полон");
                 return;
             }
 
@@ -179,7 +196,7 @@ namespace UI.InventoryScreen.Presenters
             }
 
             if (result.RemainingAmount > 0)
-                _debugMessageService.ShowMessage("Инвентарь полон");
+                _debugMessageService.ShowErrorMessage("Инвентарь полон");
         }
 
         private void Refresh()
@@ -190,23 +207,12 @@ namespace UI.InventoryScreen.Presenters
 
         private void RefreshGrid()
         {
-            foreach (var slot in _inventoryGridView.Slots)
+            for (int i = 0; i < _inventorySystem.Slots.Count; i++)
             {
-                slot.Clicked -= OnSlotClicked;
-            }
+                InventorySlotData slotData = _inventorySystem.Slots[i];
+                InventorySlotView slotView = _inventoryGridView.Slots[i];
 
-            _inventoryGridView.DeleteAll();
-
-            foreach (InventorySlotData slot in _inventorySystem.Slots)
-            {
-                InventorySlotView slotView = _inventorySlotViewFactory.Create();
-
-                slotView.Init(slot.Id);
-                slotView.Clicked += OnSlotClicked;
-
-                _inventorySlotRenderService.Render(slot, slotView);
-                
-                _inventoryGridView.Add(slotView);
+                _inventorySlotRenderService.Render(slotData, slotView);
             }
         }
 
@@ -220,11 +226,6 @@ namespace UI.InventoryScreen.Presenters
                 return;
             }
 
-            HandleOpenedSlotClick(id);
-        }
-
-        private void HandleOpenedSlotClick(int id)
-        {
             Refresh();
         }
 

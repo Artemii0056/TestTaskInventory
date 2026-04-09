@@ -6,8 +6,8 @@ namespace UI.InventoryScreen.Views
 {
     public class InventorySlotView : MonoBehaviour, IPointerClickHandler
     {
-        [field: SerializeField] public OpenedSlotContentView OpenedSlotContentView;
-        [field: SerializeField] public LockedSlotContentView LockedSlotContentView;
+        [field: SerializeField] public OpenedSlotContentView OpenedSlotContentView { get; private set; }
+        [field: SerializeField] public LockedSlotContentView LockedSlotContentView { get; private set; }
 
         private int _slotId;
 

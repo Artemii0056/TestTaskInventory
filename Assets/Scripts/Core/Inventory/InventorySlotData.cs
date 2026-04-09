@@ -39,17 +39,6 @@ namespace Core.Inventory
             IsUnlocked = true;
         }
 
-        public void RemoveAmount(int amount)
-        {
-            if (IsEmpty)
-                throw new InvalidOperationException("Slot is empty");
-
-            ItemStack.Decrease(amount);
-
-            if (ItemStack.Count == 0)
-                ItemStack = null;
-        }
-
         public void Clear()
         {
             ItemStack = null;

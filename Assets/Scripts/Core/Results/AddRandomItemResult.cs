@@ -1,6 +1,4 @@
-﻿using Core;
-
-namespace Services.AddRandomItemServices
+﻿namespace Core.Results
 {
     public readonly struct AddRandomItemResult
     {

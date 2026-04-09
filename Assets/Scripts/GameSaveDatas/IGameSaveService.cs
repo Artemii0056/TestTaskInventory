@@ -1,6 +1,4 @@
-﻿using GameSaveDatas;
-
-namespace Infrastructure.SaveLoad
+﻿namespace GameSaveDatas
 {
     public interface IGameSaveService
     {

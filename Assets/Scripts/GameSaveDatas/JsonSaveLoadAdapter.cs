@@ -1,14 +1,12 @@
 ﻿using System.IO;
-using GameSaveDatas;
+using Infrastructure.StaticData;
 using UnityEngine;
 
-namespace Infrastructure.SaveLoad
+namespace GameSaveDatas
 {
-    public class JsonSaveLoadService : ISaveLoadService
+    public class JsonSaveLoadAdapter : ISaveLoadAdapter 
     {
-        private const string FileName = "save.json";
-
-        private string FilePath => Path.Combine(Application.persistentDataPath, FileName);
+        private string FilePath => Path.Combine(Application.persistentDataPath, Constants.FileNamePath);
 
         public bool HasSave() => File.Exists(FilePath);
 

@@ -1,8 +1,7 @@
 ﻿using Core.Results.DefaultNamespace.Results;
 using Core.Systems;
-using Services.ShootRandomWeaponServices;
 
-namespace Services.ShootServices
+namespace Services.ShootRandomWeaponServices
 {
     public class ShootRandomWeaponService : IShootRandomWeaponService
     {

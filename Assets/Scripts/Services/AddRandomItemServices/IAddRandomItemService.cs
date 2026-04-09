@@ -1,4 +1,6 @@
-﻿namespace Services.AddRandomItemServices
+﻿using Core.Results;
+
+namespace Services.AddRandomItemServices
 {
     public interface IAddRandomItemService
     {

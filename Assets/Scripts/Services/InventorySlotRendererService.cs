@@ -1,7 +1,7 @@
 ﻿using Core.Inventory;
 using UI.InventoryScreen.Views;
 
-namespace UI.InventoryScreen.Services
+namespace Services
 {
     public interface IInventorySlotRenderService
     {

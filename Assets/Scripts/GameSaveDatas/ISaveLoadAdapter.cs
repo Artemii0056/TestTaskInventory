@@ -1,6 +1,6 @@
 ﻿namespace GameSaveDatas
 {
-    public interface ISaveLoadService
+    public interface ISaveLoadAdapter
     {
         bool HasSave();
         void Save(GameSaveData data);

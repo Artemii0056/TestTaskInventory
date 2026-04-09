@@ -3,12 +3,12 @@ using UI.InventoryScreen.Presenters;
 
 namespace StateMachine.States
 {
-    public class InventoryState : IPayloadState<GameRuntimeData>
+    public class GameState : IPayloadState<GameRuntimeData>
     {
         private readonly InventorySystem _inventorySystem;
         private readonly InventoryScreenPresenter _inventoryScreenPresenter;
 
-        public InventoryState(
+        public GameState(
             InventorySystem inventorySystem,
             InventoryScreenPresenter inventoryScreenPresenter)
         {
