@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Core
+namespace Core.Slots
 {
     [Serializable]
     public struct SlotPrice

@@ -5,6 +5,7 @@ using Core.Configs.Weapons;
 using Core.Inventory;
 using Core.Results;
 using Core.Results.DefaultNamespace.Results;
+using Core.Slots;
 using Infrastructure.StaticData;
 using Services;
 using Services.InventoryUnlockServices;

@@ -1,6 +1,4 @@
-﻿using StateMachine.States;
-
-namespace StateMachine
+﻿namespace StateMachine
 {
     public interface IStateFactory
     {

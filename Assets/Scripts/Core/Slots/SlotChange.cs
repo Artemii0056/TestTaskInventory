@@ -1,16 +1,16 @@
-﻿namespace Core
+﻿namespace Core.Slots
 {
     public class SlotChange
     {
-        public SlotChange(int slotId, InventoryItemType itemType, int previousCount, int newCount)
+        public SlotChange(int id, InventoryItemType itemType, int previousCount, int newCount)
         {
-            SlotId = slotId;
+            Id = id;
             ItemType = itemType;
             PreviousCount = previousCount;
             NewCount = newCount;
         }
 
-        public int SlotId { get; }
+        public int Id { get; }
         public InventoryItemType ItemType { get; }
         public int PreviousCount { get; }
         public int NewCount { get; }

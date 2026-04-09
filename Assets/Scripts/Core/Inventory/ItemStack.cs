@@ -34,10 +34,5 @@ namespace Core.Inventory
 
             Count -= amount;
         }
-
-        public  bool IsSameType(ItemStack other)
-        {
-            return other != null && other.Type == Type;
-        }
     }
 }

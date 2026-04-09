@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Core;
 using Core.Configs.Ammo;
 using Core.Inventory;
 using Infrastructure.StaticData;

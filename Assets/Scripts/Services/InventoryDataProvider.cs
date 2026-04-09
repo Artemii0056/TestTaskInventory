@@ -1,5 +1,6 @@
 using Core.Inventory;
 using GameSaveDatas;
+using Services.GameSaveDatas;
 using Services.InventoryDataFactoris;
 
 namespace Services

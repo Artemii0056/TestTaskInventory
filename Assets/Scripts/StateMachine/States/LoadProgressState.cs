@@ -1,6 +1,7 @@
 ﻿using Core.Inventory;
 using Core.Wallets;
 using GameSaveDatas;
+using Services.GameSaveDatas;
 using Services.InventoryDataFactoris;
 
 namespace StateMachine.States

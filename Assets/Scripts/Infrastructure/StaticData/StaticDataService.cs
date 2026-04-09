@@ -40,9 +40,7 @@ namespace Infrastructure.StaticData
             BuildItemDataDictionary();
             LoadInventorySlotView();
         }
-
         
-
         public InventoryItemType GetAmmoItemType(AmmoType ammoType)
         {
             foreach (AmmoConfig config in GetAmmoConfigs())

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Core.Slots;
 using UnityEngine;
 
 namespace Core

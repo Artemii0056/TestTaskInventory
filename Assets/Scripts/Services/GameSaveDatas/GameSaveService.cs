@@ -1,4 +1,6 @@
-﻿namespace GameSaveDatas
+﻿using GameSaveDatas;
+
+namespace Services.GameSaveDatas
 {
     public class GameSaveService : IGameSaveService
     {

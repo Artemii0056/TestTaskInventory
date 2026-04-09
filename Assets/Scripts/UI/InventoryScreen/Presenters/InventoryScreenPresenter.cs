@@ -2,6 +2,7 @@
 using Core;
 using Core.Inventory;
 using Core.Results;
+using Core.Slots;
 using Core.Systems;
 using Core.Wallets;
 using Services;
@@ -155,7 +156,7 @@ namespace UI.InventoryScreen.Presenters
         {
             DeleteItemResult result = _deleteItemService.Delete();
 
-            if (!result.Success)
+            if (!result.IsSuccess)
             {
                 _debugMessageService.ShowErrorMessage("Инвентарь пуст");
                 return;
@@ -192,7 +193,7 @@ namespace UI.InventoryScreen.Presenters
             foreach (SlotChange change in result.Changes)
             {
                 _debugMessageService.ShowMessage(
-                    $"Добавлено ({change.Delta}) {change.ItemType} в слот: {change.SlotId}");
+                    $"Добавлено ({change.Delta}) {change.ItemType} в слот: {change.Id}");
             }
 
             if (result.RemainingAmount > 0)
