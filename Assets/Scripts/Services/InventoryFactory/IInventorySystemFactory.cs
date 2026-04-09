@@ -3,7 +3,7 @@ using Core.Systems;
 
 namespace Services.InventoryFactory
 {
-    public interface IInventoryFactory
+    public interface IInventorySystemFactory
     {
         InventorySystem Create(InventoryData data);
     }

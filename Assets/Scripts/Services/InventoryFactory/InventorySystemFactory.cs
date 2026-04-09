@@ -7,7 +7,7 @@ using Services.RandomServices;
 
 namespace Services.InventoryFactory
 {
-    public class InventorySystemFactory : IInventoryFactory
+    public class InventorySystemFactory : IInventorySystemFactory
     {
         private readonly IStaticDataService _staticDataService;
         private readonly IRandomService _randomService;

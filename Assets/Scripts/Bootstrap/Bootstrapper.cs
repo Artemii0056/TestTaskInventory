@@ -48,8 +48,8 @@ namespace Bootstrap
             InventoryData inventoryData = inventoryDataFactory.Create();
 
             IInventoryUnlockService unlockService = new InventoryUnlockService(inventoryData, wallet, priceData);
-            IInventoryFactory factory = new InventorySystemFactory( staticDataService, randomService, wallet, unlockService);
-            InventorySystem inventorySystem = factory.Create(inventoryData);
+            IInventorySystemFactory systemFactory = new InventorySystemFactory( staticDataService, randomService, wallet, unlockService);
+            InventorySystem inventorySystem = systemFactory.Create(inventoryData);
             InventorySlotViewFactory inventorySlotViewFactory = new InventorySlotViewFactory(_inventorySlotViewPrefab);
 
             IAmmoFactory ammoFactory = new AmmoFactory(randomService, staticDataService);
