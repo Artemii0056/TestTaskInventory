@@ -52,7 +52,8 @@ namespace UI.InventoryScreen.Presenters
             IAddRandomItemService addRandomItemService,
             IShootRandomWeaponService shootRandomWeaponService, 
             IDeleteRandomItemService deleteItemService, 
-            ISaveProgressService saveProgressService)
+            ISaveProgressService saveProgressService, 
+            IInventorySlotRenderService inventorySlotRenderService)
         {
             _inventoryActionsView = inventoryActionsView;
             _inventoryGridView = inventoryGridView;
@@ -67,6 +68,7 @@ namespace UI.InventoryScreen.Presenters
             _shootRandomWeaponService = shootRandomWeaponService;
             _deleteItemService = deleteItemService;
             _saveProgressService = saveProgressService;
+            _inventorySlotRenderService = inventorySlotRenderService;
         }
 
         public void Initialize()

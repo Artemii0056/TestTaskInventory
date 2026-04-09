@@ -1,5 +1,6 @@
 ﻿using Core.Results;
 using Core.Wallets;
+using Infrastructure.StaticData;
 using Services.RandomServices;
 
 namespace Services.AddMoneyServices
@@ -19,7 +20,7 @@ namespace Services.AddMoneyServices
 
         public AddMoneyResult AddRandom()
         {
-            int amount = _randomService.GenerateValue(9, 99); //TODO Вынести чиселки
+            int amount = _randomService.GenerateValue(Constants.MinMoneyGenerate, Constants.MaxMoneyGenerate + 1); //TODO Вынести чиселки
 
             _wallet.Increase(amount);
 

@@ -7,17 +7,26 @@ using Infrastructure.ResourceLoad;
 using Infrastructure.SaveLoad;
 using Infrastructure.StaticData;
 using Services;
+using Services.AddMoneyServices;
+using Services.AddRandomAmmoServices;
+using Services.AddRandomItemServices;
 using Services.AmmoFactories;
 using Services.Debbuger;
+using Services.DeleteItemServices;
+using Services.DeleteRandomItemServices;
 using Services.IdGenerator;
 using Services.InventoryDataFactoris;
 using Services.InventoryUnlockServices;
 using Services.ItemsFactory;
 using Services.RandomServices;
+using Services.SaveProgressServices;
+using Services.ShootRandomWeaponServices;
+using Services.ShootServices;
 using StateMachine;
 using StateMachine.States;
 using UI.Factories;
 using UI.InventoryScreen.Presenters;
+using UI.InventoryScreen.Services;
 using UI.InventoryScreen.Views;
 using UnityEngine;
 using VContainer;
@@ -81,6 +90,14 @@ public class GameLifetimeScope : LifetimeScope
         builder.Register<IInventoryUnlockService, InventoryUnlockService>(Lifetime.Singleton);
         
         builder.Register<IInventoryPriceData, InventoryPriceData>(Lifetime.Singleton);
+        builder.Register<IAddMoneyService, AddMoneyService>(Lifetime.Singleton);
+        builder.Register<IAddRandomAmmoService, AddRandomAmmoService>(Lifetime.Singleton);
+        builder.Register<IAddRandomItemService, AddRandomItemService>(Lifetime.Singleton);
+        builder.Register<IShootRandomWeaponService, ShootRandomWeaponService>(Lifetime.Singleton);
+        builder.Register<IDeleteRandomItemService, DeleteRandomItemService>(Lifetime.Singleton);
+        builder.Register<IInventorySlotRenderService, InventorySlotRenderService>(Lifetime.Singleton);
+        
+        builder.Register<ISaveProgressService, SaveProgressService>(Lifetime.Singleton);
     }
 
     private void RegisterFactories(IContainerBuilder builder)

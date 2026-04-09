@@ -7,5 +7,8 @@ namespace Infrastructure.StaticData
         public const string ConfigsWeaponsPath = "Configs/Weapons";
         public const string InventoryConfigPath = "Configs/Inventory/InventoryConfig";
         public const string InventorySlotPath = "Slots/InventorySlot";
+        
+        public const int MinMoneyGenerate = 9;
+        public const int MaxMoneyGenerate = 99;
     }
 }

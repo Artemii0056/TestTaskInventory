@@ -18,7 +18,7 @@ namespace Services.InventoryUnlockServices
 
         public int GetPrice(int slotId)
         {
-            slotId -= 1; //TODO Важная фигня!
+            slotId -= 1; 
             
             if (_lockedPrices.TryGetValue(slotId, out int price))
                 return price;
