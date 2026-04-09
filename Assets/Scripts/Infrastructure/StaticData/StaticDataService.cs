@@ -26,7 +26,10 @@ namespace Infrastructure.StaticData
         public StaticDataService(IResourceLoader resourceLoader)
         {
             _resourceLoader = resourceLoader;
+        }
 
+        public void LoadAll()
+        {
             LoadAmmoConfigs();
             LoadArmorConfigs();
             LoadWeaponConfigs();

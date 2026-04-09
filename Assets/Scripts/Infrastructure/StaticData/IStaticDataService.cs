@@ -10,6 +10,7 @@ namespace Infrastructure.StaticData
 {
     public interface IStaticDataService
     {
+        void LoadAll();
         public List<AmmoConfig> GetAmmoConfigs();
         public List<WeaponConfig> GetWeaponConfigs();
         public List<ArmorConfig> GetArmorConfigs();
