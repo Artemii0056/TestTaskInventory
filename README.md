@@ -1,3 +1,4 @@
+<img width="1034" height="1812" alt="image" src="https://github.com/user-attachments/assets/5cca2e4d-2d30-47a5-b712-9d4b262e0920" />
 # TestTaskInventory — система инвентаря на Unity
 
 Тестовое задание на **Unity / C#**: система инвентаря с ограничениями стаков, разблокировкой ячеек за игровую валюту и сохранением прогресса.
