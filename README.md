@@ -1,76 +1,90 @@
-# Pick-up-adventure — система взаимодействия с игровым миром
+# TestTaskInventory — система инвентаря на Unity
 
-**Unity 6 · C# · New Input System · VContainer · State Machine · ScriptableObject**
+Тестовое задание на **Unity / C#**: система инвентаря с ограничениями стаков, разблокировкой ячеек за игровую валюту и сохранением прогресса.
 
-Тестовый 3D-проект, в котором реализована система контекстного взаимодействия с предметами и объектами окружения. Основная инженерная задача — поддержать разные сценарии (нажатие, удержание, осмотр, перенос предметов, диалоги) через общую точку входа, не превращая компоненты сцены в набор специальных условий.
+Основной акцент — на разделении игровой логики, представления и инфраструктуры, чтобы инвентарь можно было развивать независимо от UI.
 
-## Реализованные механики
+## Возможности
 
-- **Контекстное взаимодействие одной кнопкой:** поиск цели лучом от камеры, отображение доступного действия, обработка нажатия и удержания.
-- **Подбор и осмотр предметов:** первая встреча открывает отдельный режим осмотра с описанием и вращением предмета; повторное действие позволяет забрать его в руку.
-- **Перенос и размещение предметов:** один и тот же объект перемещается между миром, режимом осмотра, рукой игрока и слотами.
-- **Слоты с правилами размещения:** универсальный слот или ограничение по идентификатору предмета.
-- **Сундук:** взаимодействие с проверкой подходящего ключа.
-- **Вентиль и дверь:** действие с удержанием, изменяющее состояние связанного механизма.
-- **NPC, диалоги и квест:** ветвящиеся диалоги, выборы и интеграция с простым квестовым сценарием.
+- **50 слотов**, из которых **15 открыты изначально**; остальные разблокируются последовательно за монеты.
+- Несколько типов предметов: оружие, броня и патроны.
+- Добавление патронов в неполные стаки и свободные слоты с учётом максимального количества.
+- Добавление и удаление случайного предмета, случайный выстрел из доступного оружия с расходованием боеприпаса.
+- Подсчёт суммарного веса содержимого инвентаря.
+- JSON-сохранение валюты, состояния слотов и предметов.
+- Интерфейс с отображением заблокированных и открытых слотов, количества предметов и общей информации.
 
-## Как организован код
+## Стек
 
-Проект разделён по функциональным областям: `Interaction`, `Items`, `Slots`, `Player`, `DialogueSystem`, `NPC`, `Chest`, `ValveDoor`. Внутри этих модулей отделены модели состояния, сервисы, настройки и визуальные компоненты.
+**Unity 2022.3.62f3**, **C#**, **uGUI**, **VContainer 1.17.0**, **ScriptableObject**, **JSON**.
+
+## Архитектура
+
+Проект разделён на несколько уровней ответственности:
+
+| Уровень | Назначение | Ключевые классы |
+|---|---|---|
+| Данные и доменная логика | Слоты, стаки, кошелёк, правила инвентаря | `InventoryData`, `InventorySlotData`, `ItemStack`, `Wallet`, `InventorySystem` |
+| Прикладные сервисы | Операции добавления, удаления, стрельбы и открытия слотов | `AddRandomItemService`, `AddRandomAmmoService`, `ShootRandomWeaponService`, `InventoryUnlockService` |
+| UI / MVP | События пользовательских действий, отрисовка состояния | `InventoryScreenPresenter`, `InventoryActionsView`, `InventoryGridView` |
+| Инфраструктура | Загрузка конфигов, сохранения, DI | `StaticDataService`, `JsonSaveLoadAdapter`, `InventorySaveMapper`, `GameLifetimeScope` |
 
 ```mermaid
 flowchart TD
-    A[PlayerInputReader] --> B[PlayerInteractionController]
-    B --> C[InteractionTargetResolver / Raycast]
-    C --> D[InteractionFeatureService]
-    D --> E[TapInteractionFeatureResolver]
-    D --> F[HoldInteractionFeatureResolver]
-    E --> G[Обработчики предметов, слотов, NPC и сундуков]
-    F --> H[Обработчик вентиля]
-    G --> I[Модели и сервисы]
-    H --> I
-    I --> J[View / MonoBehaviour]
+    View[UI View] --> Presenter[InventoryScreenPresenter]
+    Presenter --> UseCases[Сервисы игровых действий]
+    UseCases --> Inventory[InventorySystem]
+    Inventory --> Data[InventoryData / ItemStack]
+    Inventory --> Rules[InventoryUnlockService]
+    Presenter --> Save[SaveProgressService]
+    Save --> Mapper[InventorySaveMapper]
+    Mapper --> File[JsonSaveLoadAdapter]
+    Scope[VContainer / GameLifetimeScope] -. создание зависимостей .-> Presenter
 ```
 
-**Роль компонентов:** `MonoBehaviour` отвечает преимущественно за представление и работу с Unity API; сценарии и правила взаимодействия выполняются сервисами. Объекты передают контекст действия через `InteractableView`, а тип взаимодействия определяет нужный обработчик.
+### Почему эта организация важна
 
-### Решения, на которые стоит посмотреть
+- **UI не управляет содержимым слотов напрямую.** Presenter обрабатывает действия и обновляет View; операции выполняют сервисы и `InventorySystem`.
+- **Данные отделены от сохранений.** `InventorySaveMapper` преобразует runtime-модели в сериализуемые DTO и обратно.
+- **Результаты операций явные.** Например, `AddAmmo` возвращает количество добавленных патронов, остаток и список изменившихся слотов.
+- **Параметры предметов настраиваются через ScriptableObject:** вес, максимальный стак, категория и визуальные данные.
 
-**Расширяемое взаимодействие.** Обработчики реализуют `ITapInteractionFeature` или `IHoldInteractionFeature`, а соответствующие резолверы находят их по `InteractableItemType`. Новые типы объектов подключаются через обработчик и регистрацию в DI, без расширения одного большого `switch` по всем механикам.
+## Интересные участки кода
 
-**Разделение данных и представления.** Данные предметов и слотов хранятся в моделях. Перенос предмета ко взгляду, в руку или на полку выполняется отдельным сервисом, использующим тот же экземпляр объекта, а не создающим копии.
+- [`InventorySystem.cs`](Assets/Scripts/Core/Systems/InventorySystem.cs) — добавление патронов, расходование боеприпасов, работа со слотами, расчёт веса.
+- [`InventorySlotSelector.cs`](Assets/Scripts/Services/InventorySlotSelector.cs) — поиск подходящих свободных и занятых слотов.
+- [`InventoryUnlockService.cs`](Assets/Scripts/Services/InventoryUnlockServices/InventoryUnlockService.cs) — последовательная разблокировка с проверкой кошелька.
+- [`InventoryScreenPresenter.cs`](Assets/Scripts/UI/InventoryScreen/Presenters/InventoryScreenPresenter.cs) — связка игровых действий и представления по MVP.
+- [`InventorySaveMapper.cs`](Assets/Scripts/GameSaveDatas/InventorySaveMapper.cs) — преобразование данных для сохранения.
+- [`GameLifetimeScope.cs`](Assets/DI/GameLifetimeScope.cs) — регистрация зависимостей через VContainer.
 
-**Режимы игрока.** Машина состояний переключает обычный режим, осмотр предмета и диалог. В режиме осмотра управление камерой и перемещением настраивается отдельно.
+## Запуск
 
-**Data-driven настройки.** Содержимое предметов и параметры игровых объектов конфигурируются с помощью `ScriptableObject`, а экземпляры создаются через фабрики и спавнеры.
+1. Открыть проект в **Unity 2022.3.62f3**.
+2. Дождаться установки пакетов через Package Manager (включая VContainer).
+3. Открыть сцену [`Assets/Scenes/SampleScene.unity`](Assets/Scenes/SampleScene.unity).
+4. Запустить **Play**.
 
-## Навигация по исходникам
+## Проверка логики вне Unity
 
-| Подсистема | Основной код |
-|---|---|
-| Точка входа взаимодействий | [`InteractionFeatureService.cs`](Assets/_ProjectFiles/Interaction/Scripts/Core/InteractionFeatureService.cs) |
-| Поиск обработчика нажатия | [`TapInteractionFeatureResolver.cs`](Assets/_ProjectFiles/Interaction/Scripts/Core/TapFeatureServices/TapInteractionFeatureResolver.cs) |
-| Поиск обработчика удержания | [`HoldInteractionFeatureResolver.cs`](Assets/_ProjectFiles/Interaction/Scripts/Core/HoldFeatureServices/HoldInteractionFeatureResolver.cs) |
-| Передача предметов между состояниями | [`ItemTransferService.cs`](Assets/_ProjectFiles/Interaction/Scripts/Core/TransferServices/ItemTransferService.cs) |
-| Сценарий первого осмотра | [`FirstPickUpFlow.cs`](Assets/_ProjectFiles/Items/Scripts/Logic/FirstPickUpFlow.cs) |
-| Контроллер взаимодействия игрока | [`PlayerInteractionController.cs`](Assets/_ProjectFiles/Player/Scripts/Core/PlayerInteractionController.cs) |
-| Композиция зависимостей | [`GameLifetimeScope.cs`](Assets/DI/GameLifetimeScope.cs) |
+В папке [`Tests/Inventory.DomainChecks`](Tests/Inventory.DomainChecks) расположен небольшой консольный набор проверок доменной модели. Он подключает **исходные файлы проекта**, а не их переписанные копии.
 
-## Как открыть проект
+Требуется .NET SDK 8 или выше:
 
-1. Клонировать репозиторий и открыть папку проекта через Unity Hub.
-2. Использовать **Unity 6000.2.6f2** (версия, указанная в `ProjectSettings/ProjectVersion.txt`).
-3. Дождаться импорта ассетов и восстановления пакетов. Для загрузки VContainer из Git необходим установленный Git.
-4. Открыть сцену [`Assets/_ProjectFiles/Scenes/MainScene.unity`](Assets/_ProjectFiles/Scenes/MainScene.unity).
+```bash
+dotnet run --project Tests/Inventory.DomainChecks/Inventory.DomainChecks.csproj
+```
 
-> Это демонстрационный проект в рамках тестового задания, а не готовая к релизу игра. Акцент сделан на игровой логике, структуре взаимодействий и расширяемости, а не на финальной визуальной полировке.
+Этот набор предназначен для быстрых регрессионных проверок кошелька, стаков, сериализуемых DTO и правил разблокировки. **Это не Unity Test Framework**: игровой UI и загрузка Unity-сцены отдельно проверяются в редакторе.
 
-<!--
-После записи геймплея добавьте папку Media и раскомментируйте блок ниже.
+## Демонстрация
 
-## Демонстрация механик
+Планируется добавить короткие записи реальной работы проекта: добавление патронов и заполнение стаков, открытие слота за монеты, расходование патрона при выстреле.
 
-![Осмотр и подбор предмета](Media/item-inspection.gif)
-![Размещение предмета в слоте](Media/slots.gif)
-![Вентиль и дверь](Media/valve.gif)
+<!-- После добавления реальной записи можно включить:
+![Работа инвентаря](Media/inventory-demo.gif)
 -->
+
+---
+
+Проект выполнен в формате тестового задания. Цель — показать подход к реализации игровых систем и организации зависимостей, а не законченный коммерческий продукт.
